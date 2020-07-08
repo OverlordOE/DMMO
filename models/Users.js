@@ -21,7 +21,12 @@ module.exports = (sequelize, DataTypes) => {
 			defaultValue: 0,
 			allowNull: false,
 		},
-
+		class: {
+			type: DataTypes.JSON, 
+			defaultValue: null,
+			allowNull: true,
+		},
+		
 		// stats
 		stats: DataTypes.JSON,
 
