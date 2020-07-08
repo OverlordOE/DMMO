@@ -107,6 +107,25 @@ Reflect.defineProperty(profile, 'getBalance', {
 });
 
 
+Reflect.defineProperty(profile, 'setClass', {
+	value: async function addMoney(id, c) {
+		let user = profile.get(id);
+		if (!user) user = await profile.newUser(id);
+
+		user.class = JSON.stringify(c);
+		return user.save();
+	},
+});
+Reflect.defineProperty(profile, 'getClass', {
+	value: async function getClass(id) {
+		let user = profile.get(id);
+		if (!user) user = await profile.newUser(id);
+		if (!user.class) return null;
+		return user ? JSON.parse(user.class) : null;
+	},
+});
+
+
 Reflect.defineProperty(profile, 'addExp', {
 	value: async function addExp(id, amount) {
 		let user = profile.get(id);

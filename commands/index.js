@@ -5,6 +5,7 @@ module.exports = {
 	Buy: require('./buy'),
 	Sell: require('./sell'),
 	Profile: require('./profile'),
+	Class: require('./class'),
 	Vote: require('./vote'),
 	Hourly: require('./hourly'),
 	Daily: require('./daily'),

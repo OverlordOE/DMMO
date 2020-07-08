@@ -19,6 +19,11 @@ module.exports = {
 		const avatar = target.displayAvatarURL();
 		const userProfile = await profile.getUser(target.id);
 		const levelInfo = await profile.nextLevel(target.id);
+
+		let userClass = await profile.getClass(target.id);
+		if (userClass) userClass = userClass.name;
+		else userClass = 'No class';
+
 		let exp = `${levelInfo.exp}/${levelInfo.expNeeded}`;
 		if (levelInfo.level == 60) exp = '__**Max**__';
 
@@ -37,7 +42,7 @@ module.exports = {
 
 			.setTitle(`**${target.tag}'s General Stats**`)
 			.setThumbnail(avatar)
-			.addField('Level:', levelInfo.level, true)
+			.addField('Class:', `${userClass} ${levelInfo.level}`, true)
 			.addField('EXP:', exp, true)
 			.addField('Balance:', `${userProfile.balance.toFixed(1)}💰`)
 			.addField('Next daily:', daily, true)
