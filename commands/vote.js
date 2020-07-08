@@ -37,7 +37,7 @@ module.exports = {
 			}
 			else {
 				profile.setVote(message.author.id, false);
-				return message.channel.send(embed.setDescription('Vote for DMMO and get up to **2 extra daily\'s** a day.\nTo get the daily\'s just vote [here](https://top.gg/client/684458276129079320/vote) and then use this command again (this usually takes about 2-3 mins to update), you can do this every 12 hours!'));
+				return message.channel.send(embed.setDescription('Vote for DMMO and get up to **2 extra daily\'s** a day.\nTo get the daily\'s just vote [here](https://top.gg/bot/684458276129079320/vote) and then use this command again (this usually takes about 2-3 mins to update), you can do this every 12 hours!'));
 			}
 		});
 
