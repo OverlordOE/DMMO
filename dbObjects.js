@@ -107,6 +107,48 @@ Reflect.defineProperty(profile, 'getBalance', {
 });
 
 
+Reflect.defineProperty(profile, 'addExp', {
+	value: async function addExp(id, amount) {
+		let user = profile.get(id);
+		if (!user) user = await profile.newUser(id);
+
+		user.exp += Number(amount);
+		user.save();
+		return profile.nextLevel(id);
+	},
+});
+
+
+Reflect.defineProperty(profile, 'nextLevel', {
+	value: async function nextLevel(id) {
+		let user = profile.get(id);
+		if (!user) user = await profile.newUser(id);
+
+		const exponent = 1.5;
+		const baseExp = 1000;
+		let expNeeded = Math.floor(baseExp * (user.level ^ exponent));
+		let levelup = false;
+
+		while (user.exp >= expNeeded) {
+			user.level++;
+			user.exp -= expNeeded;
+			levelup = true;
+			expNeeded = Math.floor(baseExp * (user.level ^ exponent));
+			user.save();
+		}
+
+		const info = {
+			level: user.level,
+			exp: user.exp,
+			expNeeded: expNeeded,
+			levelup: levelup,
+		};
+
+		return info;
+	},
+});
+
+
 Reflect.defineProperty(profile, 'getDaily', {
 	value: async function getDaily(id) {
 		let user = profile.get(id);
@@ -207,6 +249,8 @@ Reflect.defineProperty(profile, 'newUser', {
 		const user = await Users.create({
 			user_id: id,
 			balance: 1,
+			level: 1,
+			exp: 0,
 			lastDaily: now.subtract(2, 'days'),
 			lastHourly: now.subtract(1, 'days'),
 			lastWeekly: now.subtract(8, 'days'),

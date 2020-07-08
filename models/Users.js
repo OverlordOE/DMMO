@@ -10,6 +10,21 @@ module.exports = (sequelize, DataTypes) => {
 			allowNull: false,
 		},
 
+		// leveling
+		level: {
+			type: DataTypes.INTEGER,
+			defaultValue: 0,
+			allowNull: false,
+		},
+		exp: {
+			type: DataTypes.INTEGER,
+			defaultValue: 0,
+			allowNull: false,
+		},
+
+		// stats
+		stats: DataTypes.JSON,
+
 		// cooldowns
 		lastDaily: {
 			type: DataTypes.INTEGER,
