@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
 		// leveling
 		level: {
 			type: DataTypes.INTEGER,
-			defaultValue: 0,
+			defaultValue: 1,
 			allowNull: false,
 		},
 		exp: {

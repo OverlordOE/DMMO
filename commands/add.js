@@ -11,19 +11,23 @@ module.exports = {
 		const amount = args.find(arg => !/<@!?\d+>/g.test(arg));
 		const target = message.mentions.users.first() || message.author;
 
+
 		if (args[0] == 'all') {
 			profile.map((user) => profile.addMoney(user.user_id, args[1]));
 			return message.channel.send(`Added **${amount}** to every available user`);
 		}
-		if (args[0] == 'item') {
-			try {
-				const char = await profile.getItem(args[1]);
-				profile.addItem(target.id, char, args[2]);
-			} catch (e) {
-				return logger.error(e.stack);
-			}
+		else if (args[0] == 'item') {
+			const item = await profile.getItem(args[1]);
+			profile.addItem(target.id, item, args[2]);
 			return message.channel.send(`Added **${args[1]}** to ${target}`);
 		}
+		else if (args[0] == 'exp') {
+			const levelinfo = await profile.addExp(target.id, args[1]);
+			if (levelinfo.levelup) message.channel.send(`${target} has leveled up to level **${levelinfo.level}**`);
+			return message.channel.send(`Added **${args[1]}** EXP to ${target}`);
+		}
+
+
 		if (!amount || isNaN(amount)) return message.channel.send(`Sorry *${message.author}*, that's an invalid amount.`);
 
 		profile.addMoney(target.id, amount);

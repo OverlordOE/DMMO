@@ -117,8 +117,6 @@ Reflect.defineProperty(profile, 'addExp', {
 		return profile.nextLevel(id);
 	},
 });
-
-
 Reflect.defineProperty(profile, 'nextLevel', {
 	value: async function nextLevel(id) {
 		let user = profile.get(id);
@@ -126,25 +124,22 @@ Reflect.defineProperty(profile, 'nextLevel', {
 
 		const exponent = 1.5;
 		const baseExp = 1000;
-		let expNeeded = Math.floor(baseExp * (user.level ^ exponent));
+		let expNeeded = baseExp / 10 * Math.floor(baseExp / 100 * Math.pow(user.level, exponent));
 		let levelup = false;
 
-		while (user.exp >= expNeeded) {
+		while (user.exp >= expNeeded && user.level < 60) {
 			user.level++;
 			user.exp -= expNeeded;
 			levelup = true;
-			expNeeded = Math.floor(baseExp * (user.level ^ exponent));
+			expNeeded = baseExp / 10 * Math.floor(baseExp / 100 * Math.pow(user.level, exponent));
 			user.save();
 		}
-
-		const info = {
+		return {
 			level: user.level,
 			exp: user.exp,
 			expNeeded: expNeeded,
 			levelup: levelup,
 		};
-
-		return info;
 	},
 });
 

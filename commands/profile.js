@@ -18,6 +18,9 @@ module.exports = {
 
 		const avatar = target.displayAvatarURL();
 		const userProfile = await profile.getUser(target.id);
+		const levelInfo = await profile.nextLevel(target.id);
+		let exp = `${levelInfo.exp}/${levelInfo.expNeeded}`;
+		if (levelInfo.level == 60) exp = '__**Max**__';
 
 		let daily = await profile.getDaily(target.id);
 		let hourly = await profile.getHourly(target.id);
@@ -32,14 +35,15 @@ module.exports = {
 
 		const moneyEmbed = new Discord.MessageEmbed()
 
-			.setTitle(`${target.tag}'s General Stats`)
+			.setTitle(`**${target.tag}'s General Stats**`)
 			.setThumbnail(avatar)
-			.addField('Balance:', `${userProfile.balance.toFixed(1)}💰`, true)
-			.addField('Message Count:', userProfile.messageCount, true)
-			.addField('Next Vote', vote)
+			.addField('Level:', levelInfo.level, true)
+			.addField('EXP:', exp, true)
+			.addField('Balance:', `${userProfile.balance.toFixed(1)}💰`)
 			.addField('Next daily:', daily, true)
 			.addField('Next hourly:', hourly, true)
 			.addField('Next weekly:', weekly, true)
+			.addField('Next Vote', vote, true)
 			.setTimestamp()
 			.setFooter('DMMO', client.user.displayAvatarURL());
 
