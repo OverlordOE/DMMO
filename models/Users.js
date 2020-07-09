@@ -29,6 +29,14 @@ module.exports = (sequelize, DataTypes) => {
 		
 		// stats
 		stats: DataTypes.JSON,
+		curHP: {
+			type: DataTypes.INTEGER,
+			allowNull: true,
+		},
+		curMP: {
+			type: DataTypes.INTEGER,
+			allowNull: true,
+		},
 
 		// cooldowns
 		lastDaily: {

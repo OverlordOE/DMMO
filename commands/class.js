@@ -216,6 +216,7 @@ module.exports = {
 							case '✅':
 								profile.setClass(message.author.id, curClass);
 								sentMessage.edit(embed.setColor(curClass.colour).setDescription(`You have chosen the class ${curClass.name}`));
+								sentMessage.reactions.removeAll();
 								break;
 						}
 
@@ -239,6 +240,7 @@ module.exports = {
 						.then(async () => {
 							await profile.resetClass(message.author.id);
 							sentMessage.edit(embed.setDescription('Class reset.'));
+							sentMessage.reactions.removeAll();
 						});
 				});
 		}

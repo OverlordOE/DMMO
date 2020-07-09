@@ -52,6 +52,7 @@ module.exports = {
 					}
 				}
 			});
+			collector.on('end', () => sentMessage.reactions.removeAll());
 		});
 	},
 };

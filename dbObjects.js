@@ -95,8 +95,10 @@ Reflect.defineProperty(profile, 'resetClass', {
 		if (!user) user = await profile.newUser(id);
 		
 		user.class = null;
+		user.stats = null;
 		user.level = 1;
 		user.exp = 0;
+		
 		return user.save();
 	},
 });
@@ -121,11 +123,14 @@ Reflect.defineProperty(profile, 'getBalance', {
 
 
 Reflect.defineProperty(profile, 'setClass', {
-	value: async function addMoney(id, c) {
+	value: async function setClass(id, c) {
 		let user = profile.get(id);
 		if (!user) user = await profile.newUser(id);
 
+		user.curHP = c.stats.base.hp;
+		user.curMP = c.stats.base.mp;
 		user.class = JSON.stringify(c);
+		user.stats = JSON.stringify(c.stats.base);
 		return user.save();
 	},
 });
@@ -135,6 +140,16 @@ Reflect.defineProperty(profile, 'getClass', {
 		if (!user) user = await profile.newUser(id);
 		if (!user.class) return null;
 		return user ? JSON.parse(user.class) : null;
+	},
+});
+
+
+Reflect.defineProperty(profile, 'getStats', {
+	value: async function getStats(id) {
+		let user = profile.get(id);
+		if (!user) user = await profile.newUser(id);
+		if (!user.class) return null;
+		return user ? JSON.parse(user.stats) : null;
 	},
 });
 
