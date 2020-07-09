@@ -89,6 +89,19 @@ Reflect.defineProperty(profile, 'getUser', {
 });
 
 
+Reflect.defineProperty(profile, 'resetClass', {
+	value: async function resetClass(id) {
+		let user = profile.get(id);
+		if (!user) user = await profile.newUser(id);
+		
+		user.class = null;
+		user.level = 1;
+		user.exp = 0;
+		return user.save();
+	},
+});
+
+
 Reflect.defineProperty(profile, 'addMoney', {
 	value: async function addMoney(id, amount) {
 		let user = profile.get(id);

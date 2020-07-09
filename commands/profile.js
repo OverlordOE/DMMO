@@ -20,9 +20,17 @@ module.exports = {
 		const userProfile = await profile.getUser(target.id);
 		const levelInfo = await profile.nextLevel(target.id);
 
-		let userClass = await profile.getClass(target.id);
-		if (userClass) userClass = userClass.name;
-		else userClass = 'No class';
+		const userClass = await profile.getClass(target.id);
+		let className;
+		let colour
+		if (userClass) {
+			className = userClass.name;
+			colour = userClass.colour;
+		}
+		else {
+			className = 'No class';
+			colour = '#ffffff';
+		}
 
 		let exp = `${levelInfo.exp}/${levelInfo.expNeeded}`;
 		if (levelInfo.level == 60) exp = '__**Max**__';
@@ -42,7 +50,8 @@ module.exports = {
 
 			.setTitle(`**${target.tag}'s General Stats**`)
 			.setThumbnail(avatar)
-			.addField('Class:', `${userClass} ${levelInfo.level}`, true)
+			.setColor(colour)
+			.addField('Class:', `${className} ${levelInfo.level}`, true)
 			.addField('EXP:', exp, true)
 			.addField('Balance:', `${userProfile.balance.toFixed(1)}💰`)
 			.addField('Next daily:', daily, true)
@@ -56,6 +65,7 @@ module.exports = {
 
 			.setTitle(`${target.tag}'s Inventory`)
 			.setThumbnail(avatar)
+			.setColor(colour)
 			.setTimestamp()
 			.setFooter('DMMO', client.user.displayAvatarURL());
 
