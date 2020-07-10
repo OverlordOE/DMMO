@@ -18,7 +18,7 @@ module.exports = {
 
 		const avatar = target.displayAvatarURL();
 		const userProfile = await profile.getUser(target.id);
-		const levelInfo = await profile.nextLevel(target.id);
+		const levelInfo = await profile.levelInfo(target.id, message);
 
 		const userClass = await profile.getClass(target.id);
 		let className;
@@ -90,12 +90,14 @@ module.exports = {
 		if (userClass) {
 			const stats = await profile.getStats(target.id);
 			charEmbed.addFields(
-				{ name: 'Health', value: `${msgUser.curHP}/${stats.hp}` },
-				{ name: 'Mana', value: `${msgUser.curMP}/${stats.mp}` },
-				{ name: 'Strength', value: stats.str },
-				{ name: 'Dexterity', value: stats.dex },
-				{ name: 'Constitution', value: stats.con },
-				{ name: 'Intelligence', value: stats.int },
+				{ name: '\u200B', value: '\u200B' },
+				{ name: 'Health', value: `${msgUser.curHP}/${stats.hp}<:health:730849477765890130>`, inline: true },
+				{ name: 'Mana', value: `${msgUser.curMP}/${stats.mp}<:mana:730849477640061029>`, inline: true },
+
+				{ name: 'Strength', value: stats.str, inline: true },
+				{ name: 'Dexterity', value: stats.dex, inline: true },
+				{ name: 'Constitution', value: stats.con, inline: true },
+				{ name: 'Intelligence', value: stats.int, inline: true },
 			);
 		}
 		else charEmbed.setDescription(`${target} does not have a class yet.\n\nTo choose a class use the command \`class\`.`);

@@ -93,12 +93,12 @@ Reflect.defineProperty(profile, 'resetClass', {
 	value: async function resetClass(id) {
 		let user = profile.get(id);
 		if (!user) user = await profile.newUser(id);
-		
+
 		user.class = null;
 		user.stats = null;
 		user.level = 1;
 		user.exp = 0;
-		
+
 		return user.save();
 	},
 });
@@ -155,37 +155,68 @@ Reflect.defineProperty(profile, 'getStats', {
 
 
 Reflect.defineProperty(profile, 'addExp', {
-	value: async function addExp(id, amount) {
+	value: async function addExp(id, amount, message) {
 		let user = profile.get(id);
 		if (!user) user = await profile.newUser(id);
+		const classInfo = await profile.getClass(id);
+		if (!classInfo) return message.reply('You dont have a class yet so you cant gain experience!\nUse the command `class` to get a class`');
 
 		user.exp += Number(amount);
 		user.save();
-		return profile.nextLevel(id);
+		return profile.levelInfo(id, message);
 	},
 });
-Reflect.defineProperty(profile, 'nextLevel', {
-	value: async function nextLevel(id) {
+Reflect.defineProperty(profile, 'levelInfo', {
+	value: async function levelInfo(id, message) {
 		let user = profile.get(id);
 		if (!user) user = await profile.newUser(id);
 
 		const exponent = 1.5;
 		const baseExp = 1000;
 		let expNeeded = baseExp / 10 * Math.floor(baseExp / 100 * Math.pow(user.level, exponent));
-		let levelup = false;
 
 		while (user.exp >= expNeeded && user.level < 60) {
+			const classInfo = await profile.getClass(id);
+			if (!classInfo) {
+				message.reply('You dont have a class yet so you cant gain experience!\nUse the command `class` to get a class`');
+				return {
+					level: user.level,
+					exp: user.exp,
+					expNeeded: expNeeded,
+				};
+			}
+			const statGrowth = classInfo.stats.growth;
+			const stats = JSON.parse(user.stats);
+
 			user.level++;
 			user.exp -= expNeeded;
-			levelup = true;
 			expNeeded = baseExp / 10 * Math.floor(baseExp / 100 * Math.pow(user.level, exponent));
+			stats.hp += statGrowth.hp;
+			user.curHP += statGrowth.hp;
+			stats.mp += statGrowth.mp;
+			user.curMP += statGrowth.mp;
+			stats.str += statGrowth.str;
+			stats.dex += statGrowth.dex;
+			stats.con += statGrowth.con;
+			stats.int += statGrowth.int;
+			user.stats = JSON.stringify(stats);
 			user.save();
+
+			message.reply(`you have leveled up to level ${user.level}.
+			You gain the following stat increases:
+			**${statGrowth.hp}** HP
+			**${statGrowth.mp}** MP
+			**${statGrowth.str}** STR
+			**${statGrowth.dex}** DEX
+			**${statGrowth.con}** CON
+			**${statGrowth.int}** INT
+			`);
 		}
+
 		return {
 			level: user.level,
 			exp: user.exp,
 			expNeeded: expNeeded,
-			levelup: levelup,
 		};
 	},
 });

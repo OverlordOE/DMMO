@@ -22,8 +22,7 @@ module.exports = {
 			return message.channel.send(`Added **${args[1]}** to ${target}`);
 		}
 		else if (args[0] == 'exp') {
-			const levelinfo = await profile.addExp(target.id, args[1]);
-			if (levelinfo.levelup) message.channel.send(`${target} has leveled up to level **${levelinfo.level}**`);
+			await profile.addExp(target.id, args[1], message);
 			return message.channel.send(`Added **${args[1]}** EXP to ${target}`);
 		}
 
