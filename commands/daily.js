@@ -12,11 +12,9 @@ module.exports = {
 	async execute(message, args, msgUser, profile, guildProfile, client, logger, cooldowns) {
 
 		const daily = await profile.getDaily(message.author.id);
-		const avatar = message.author.displayAvatarURL();
-
 		const embed = new Discord.MessageEmbed()
 			.setTitle('Daily Reward')
-			.setThumbnail(avatar)
+			.setThumbnail(message.author.displayAvatarURL())
 			.setTimestamp()
 			.setFooter('DMMO', client.user.displayAvatarURL());
 

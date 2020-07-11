@@ -10,12 +10,11 @@ module.exports = {
 	category: 'money',
 
 	async execute(message, args, msgUser, profile, guildProfile, client, logger, cooldowns) {
-		const hourly = await profile.getHourly(message.author.id);
-		const avatar = message.author.displayAvatarURL();
 
+		const hourly = await profile.getHourly(message.author.id);
 		const embed = new Discord.MessageEmbed()
 			.setTitle('Hourly Reward')
-			.setThumbnail(avatar)
+			.setThumbnail(message.author.displayAvatarURL())
 			.setTimestamp()
 			.setFooter('DMMO', client.user.displayAvatarURL());
 

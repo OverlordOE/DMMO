@@ -14,14 +14,13 @@ module.exports = {
 
 		const uitems = await profile.getInventory(message.author.id);
 		const filter = m => m.author.id === message.author.id;
-		const avatar = message.author.displayAvatarURL();
 		let amount = 0;
 		let temp = '';
 		let item;
 
 		const embed = new Discord.MessageEmbed()
 			.setTitle('DMMO Refunds')
-			.setThumbnail(avatar)
+			.setThumbnail(message.author.displayAvatarURL())
 			.setDescription('What do you want to refund? `80% refund`')
 
 			.setTimestamp()

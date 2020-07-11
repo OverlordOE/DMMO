@@ -13,12 +13,11 @@ module.exports = {
 	usage: '',
 
 	async execute(message, args, msgUser, profile, guildProfile, client, logger, cooldowns) {
-		const avatar = message.author.displayAvatarURL();
-		const vote = await profile.getVote(message.author.id);
 
+		const vote = await profile.getVote(message.author.id);
 		const embed = new Discord.MessageEmbed()
 			.setTitle('Vote Reward')
-			.setThumbnail(avatar)
+			.setThumbnail(message.author.displayAvatarURL())
 			.setTimestamp()
 			.setFooter('DMMO', client.user.displayAvatarURL());
 

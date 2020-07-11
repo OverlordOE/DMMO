@@ -11,9 +11,6 @@ module.exports = {
 
 	async execute(message, args, msgUser, profile, guildProfile, client, logger, cooldowns) {
 
-
-		const avatar = message.author.displayAvatarURL();
-
 		const filter = m => m.author.id === message.author.id;
 		let amount = 0;
 		let temp = '';
@@ -21,7 +18,7 @@ module.exports = {
 
 		const embed = new Discord.MessageEmbed()
 			.setTitle('DMMO Shop')
-			.setThumbnail(avatar)
+			.setThumbnail(message.author.displayAvatarURL())
 			.setDescription('What item do you want to buy?')
 
 			.setTimestamp()

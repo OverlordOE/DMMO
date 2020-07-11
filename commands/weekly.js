@@ -10,13 +10,11 @@ module.exports = {
 	usage: '',
 
 	async execute(message, args, msgUser, profile, guildProfile, client, logger, cooldowns) {
-		const weekly = await profile.getWeekly(message.author.id);
-		const avatar = message.author.displayAvatarURL();
 
+		const weekly = await profile.getWeekly(message.author.id);
 		const embed = new Discord.MessageEmbed()
 			.setTitle('Weekly Reward')
-			.setThumbnail(avatar)
-
+			.setThumbnail(message.author.displayAvatarURL())
 			.setTimestamp()
 			.setFooter('DMMO', client.user.displayAvatarURL());
 

@@ -1,11 +1,12 @@
 module.exports = {
 	Help: require('./help'),
-	Shop: require('./shop'),
 	Item: require('./item'),
+	Shop: require('./shop'),
 	Buy: require('./buy'),
 	Sell: require('./sell'),
 	Profile: require('./profile'),
 	Class: require('./class'),
+	Quest: require('./quest'),
 	Vote: require('./vote'),
 	Hourly: require('./hourly'),
 	Daily: require('./daily'),

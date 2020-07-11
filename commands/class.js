@@ -6,17 +6,17 @@ module.exports = {
 	summary: 'Choose your class',
 	description: 'Choose your class that you will use. Can only be choosen once.',
 	category: 'info',
-	aliases: [''],
+	aliases: ['classes'],
 	args: false,
 	usage: '',
 
 
 	async execute(message, args, msgUser, profile, guildProfile, client, logger, cooldowns) {
-		const avatar = message.author.displayAvatarURL();
+		
 
 		const embed = new Discord.MessageEmbed()
 			.setTitle('**Class Selection**')
-			.setThumbnail(avatar)
+			.setThumbnail(message.author.displayAvatarURL())
 			.setTimestamp()
 			.setFooter('DMMO', client.user.displayAvatarURL());
 
@@ -46,7 +46,7 @@ module.exports = {
 					for (let i = 1; i < 9; i++) sentMessage.react(emojicharacters[i]);
 					sentMessage.react('✅');
 
-					const collector = sentMessage.createReactionCollector(filter, { time: 60000 });
+					const collector = sentMessage.createReactionCollector(filter, { time: 180000 });
 
 					collector.on('collect', (reaction) => {
 						reaction.users.remove(message.author.id);
@@ -221,6 +221,7 @@ module.exports = {
 						}
 
 					});
+					collector.on('end', () => sentMessage.reactions.removeAll());
 				});
 		}
 		else {
