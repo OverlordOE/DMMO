@@ -12,7 +12,8 @@ module.exports = {
 
 	async execute(message, args, msgUser, profile, guildProfile, client, logger, cooldowns) {
 
-		if (!msgUser.stats) return message.reply('you need to have a class to quest\nUse the command `class` to choose a class');
+		if (!msgUser.stats) return message.reply('you need to have a class to quest.\nUse the command `class` to choose a class');
+		if (msgUser.curHP < 1) return message.reply('you dont have enough hp to quest.\nDrink a healing potion or rest at an inn to regain **HP**.');
 		const stats = JSON.parse(msgUser.stats);
 		const userClass = await profile.getClass(message.author.id);
 		const monster = {
@@ -58,9 +59,21 @@ module.exports = {
 						}
 						setEmbed();
 					}
-					else if (reaction.emoji.name == '🛡️') {}
+					else if (reaction.emoji.name == '🛡️') { }
 
+					setTimeout(() => {
 
+						const damage = Math.floor(monster.damage[0] + (monster.damage[1] * Math.random()));
+						msgUser.curHP -= damage;
+						description += `_**${monster.name}**_ uses __*Bite*__ and deals __**${damage}**__ damage to __you__.\n`;
+						if (msgUser.curHP <= 0) {
+							msgUser.curHP = 0;
+							description += `\n_**You**_ fainted to __${monster.name}__ and wake up back in town\n`;
+							collector.stop();
+						}
+						setEmbed();
+
+					}, 1000);
 
 
 				});
