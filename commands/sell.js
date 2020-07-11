@@ -1,6 +1,7 @@
 /* eslint-disable no-shadow */
 /* eslint-disable max-nested-callbacks */
 const Discord = require('discord.js');
+const itemInfo = require('../data/items');
 module.exports = {
 	name: 'sell',
 	summary: 'Sell items to get 80% of your money back',

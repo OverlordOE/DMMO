@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
 			allowNull: false,
 		},
 
-		// leveling
+		// character info
 		level: {
 			type: DataTypes.INTEGER,
 			defaultValue: 1,
@@ -23,6 +23,18 @@ module.exports = (sequelize, DataTypes) => {
 		},
 		class: {
 			type: DataTypes.JSON, 
+			defaultValue: null,
+			allowNull: true,
+		},
+
+		// equipment and skills
+		equipment: {
+			type: DataTypes.JSON,
+			defaultValue: null,
+			allowNull: true,
+		},
+		skills: {
+			type: DataTypes.JSON,
 			defaultValue: null,
 			allowNull: true,
 		},

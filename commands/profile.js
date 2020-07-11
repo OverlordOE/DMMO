@@ -1,4 +1,5 @@
 const Discord = require('discord.js');
+const itemInfo = require('../data/items');
 module.exports = {
 	name: 'profile',
 	summary: 'Shows profile of you or the tagger user',
@@ -81,7 +82,8 @@ module.exports = {
 		if (items.length) {
 			items.map(i => {
 				if (i.amount < 1) return;
-				inventory += `${i.base.emoji}__${i.name}__: **x${i.amount}**\n`;
+				const item = itemInfo[i.name];
+				inventory += `${item.emoji}__${i.name}__: **x${i.amount}**\n`;
 			});
 			invEmbed.setDescription(inventory);
 		}

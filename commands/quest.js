@@ -48,7 +48,7 @@ module.exports = {
 
 
 					if (reaction.emoji.name == '⚔️') {
-						const damage = Math.floor(stats.str / (3 + Math.random()));
+						const damage = 
 						monster.hp -= damage;
 						description += `_**You**_ use __*Slash*__ and deal __**${damage}**__ damage to __${monster.name}__.\n`;
 						if (monster.hp <= 0) {
@@ -63,7 +63,11 @@ module.exports = {
 
 					setTimeout(() => {
 
-						const damage = Math.floor(monster.damage[0] + (monster.damage[1] * Math.random()));
+						const damage = Math.floor(
+							monster.damage[0] + (monster.damage[1] * Math.random())
+							
+							
+							);
 						msgUser.curHP -= damage;
 						description += `_**${monster.name}**_ uses __*Bite*__ and deals __**${damage}**__ damage to __you__.\n`;
 						if (msgUser.curHP <= 0) {

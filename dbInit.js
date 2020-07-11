@@ -11,6 +11,7 @@ const sequelize = new Sequelize('database', 'username', 'password', {
 // Import tables
 sequelize.import('models/Users');
 sequelize.import('models/UserItems');
+sequelize.import('models/UserSkills');
 sequelize.import('models/Guilds');
 
 sequelize

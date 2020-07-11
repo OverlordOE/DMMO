@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const fs = require('fs');
+const items = require('../data/items');
 module.exports = {
 	name: 'shop',
 	summary: 'Shows all the shop items',
@@ -10,27 +10,26 @@ module.exports = {
 	usage: '',
 
 	async execute(message, args, msgUser, profile, guildProfile, client, logger, cooldowns) {
-		const itemData = fs.readFileSync('data/items.json');
-		const items = JSON.parse(itemData);
+
 		let consumable = '__**Consumables:**__\n';
 		let collectables = '__**Collectables:**__\n';
 		let chests = '__**Chests:**__\n';
-
-		items.map(item => {
-			if (item.cost) {
-				if (item.ctg == 'consumable') { consumable += `${item.emoji} ${item.name}: **${item.cost}💰**\n`; }
-				else if (item.ctg == 'collectables') { collectables += `${item.emoji} ${item.name}: **${item.cost}💰**\n`; }
-				else if (item.ctg == 'chests') { chests += `${item.emoji} ${item.name}: **${item.cost}💰**\n`; }
+		
+		let i;
+		for (i in items) {
+			if (items[i].cost) {
+				if (items[i].ctg == 'consumable') { consumable += `${items[i].emoji} ${items[i].name}: **${items[i].cost}💰**\n`; }
+				else if (items[i].ctg == 'collectables') { collectables += `${items[i].emoji} ${items[i].name}: **${items[i].cost}💰**\n`; }
+				else if (items[i].ctg == 'chests') { chests += `${items[i].emoji} ${items[i].name}: **${items[i].cost}💰**\n`; }
 			}
-		});
+		}
 
-		const description = `${chests}\n${consumable}\n${collectables}`;
+		const description = `${consumable}`;
 
 		const embed = new Discord.MessageEmbed()
 			.setTitle('DMMO Shop')
 			.setThumbnail(client.user.displayAvatarURL())
 			.setDescription(description)
-
 			.setTimestamp()
 			.setFooter('DMMO', client.user.displayAvatarURL());
 

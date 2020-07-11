@@ -1,7 +1,6 @@
 const Sequelize = require('sequelize');
 const moment = require('moment');
 const Discord = require('discord.js');
-const fs = require('fs');
 const profile = new Discord.Collection();
 const guildProfile = new Discord.Collection();
 require('dotenv').config();
@@ -18,10 +17,10 @@ const sequelize = new Sequelize('database', 'username', 'password', {
 const Users = sequelize.import('models/Users');
 const Guilds = sequelize.import('models/Guilds');
 const UserItems = sequelize.import('models/UserItems');
-
-const itemData = fs.readFileSync('data/items.json');
-const items = JSON.parse(itemData);
-
+const UserSkills = sequelize.import('models/UserSkills');
+const items = require('./data/items');
+const skills = require('./data/skills');
+6
 
 // ITEMS
 Reflect.defineProperty(profile, 'addItem', {
@@ -37,7 +36,6 @@ Reflect.defineProperty(profile, 'addItem', {
 
 		return UserItems.create({
 			user_id: id,
-			base: item,
 			name: item.name,
 			amount: parseInt(amount),
 		});
@@ -58,8 +56,6 @@ Reflect.defineProperty(profile, 'removeItem', {
 		throw Error(`User doesn't have the item: ${item.name}`);
 	},
 });
-
-
 Reflect.defineProperty(profile, 'getInventory', {
 	value: async function getInventory(id) {
 		let user = profile.get(id);
@@ -69,11 +65,46 @@ Reflect.defineProperty(profile, 'getInventory', {
 		});
 	},
 });
-
-
 Reflect.defineProperty(profile, 'getItem', {
-	value: function getItem(item) {
-		for (let i = 0; i < items.length; i++) if (items[i].name.toLowerCase() == item.toLowerCase()) return items[i];
+	value: function getItem(itemName) {
+		if (items[itemName]) return items[itemName];
+		return false;
+	},
+});
+
+
+// SKILLS
+Reflect.defineProperty(profile, 'addSkill', {
+	value: async function addSkill(id, skill) {
+		const userSkill = await UserSkills.findOne({
+			where: { user_id: id, name: skill.name },
+		});
+		if (userSkill) throw Error('User already has that skill');
+
+		return UserSkills.create({
+			user_id: id,
+			name: skill.name,
+		});
+	},
+});
+Reflect.defineProperty(profile, 'removeSkill', {
+	value: async function removeSkill(id, skill) {
+		const userSkill = await UserSkills.findOne({
+			where: { user_id: id, name: skill.name },
+		});
+
+		if (userSkill) return userSkill.destroy();
+		throw Error(`User doesn't have the skill: ${skill.name}`);
+	},
+});
+Reflect.defineProperty(profile, 'getUserSkills', {
+	value: async function getInventory(id) {
+		return UserSkills.findAll({ where: { user_id: id } });
+	},
+});
+Reflect.defineProperty(profile, 'getSkill', {
+	value: function getSkill(skillName) {
+		if (skills[skillName]) return skills[skillName];
 		return false;
 	},
 });
