@@ -6,7 +6,6 @@ const guildProfile = new Discord.Collection();
 require('dotenv').config();
 const prefix = process.env.PREFIX;
 
-
 const sequelize = new Sequelize('database', 'username', 'password', {
 	host: 'localhost',
 	dialect: 'sqlite',
@@ -20,7 +19,6 @@ const UserItems = sequelize.import('models/UserItems');
 const UserSkills = sequelize.import('models/UserSkills');
 const items = require('./data/items');
 const skills = require('./data/skills');
-6
 
 // ITEMS
 Reflect.defineProperty(profile, 'addItem', {
@@ -108,18 +106,28 @@ Reflect.defineProperty(profile, 'getSkill', {
 		return false;
 	},
 });
-
-
-// USERS
-Reflect.defineProperty(profile, 'getUser', {
-	value: async function getUser(id) {
+Reflect.defineProperty(profile, 'setSkill', {
+	value: async function hasSkill(id, skill, slot) {
 		let user = profile.get(id);
 		if (!user) user = await profile.newUser(id);
-		return user;
+		const userSkill = await UserSkills.findOne({
+			where: { user_id: id, name: skill.name },
+		});
+		if (userSkill) {
+			const equippedSkills = JSON.parse(user.skills);
+			const userClass = JSON.parse(user.class);
+			if (userClass.name == skill.class || skill.class == 'all') {
+				equippedSkills[slot] = skill.name;
+				user.skills = JSON.stringify(equippedSkills);
+				return user.save();
+			}
+		}
+		return false;
 	},
 });
 
 
+// CLASS
 Reflect.defineProperty(profile, 'resetClass', {
 	value: async function resetClass(id) {
 		let user = profile.get(id);
@@ -133,26 +141,6 @@ Reflect.defineProperty(profile, 'resetClass', {
 		return user.save();
 	},
 });
-
-
-Reflect.defineProperty(profile, 'addMoney', {
-	value: async function addMoney(id, amount) {
-		let user = profile.get(id);
-		if (!user) user = await profile.newUser(id);
-
-		user.balance += Number(amount);
-		return user.save();
-	},
-});
-Reflect.defineProperty(profile, 'getBalance', {
-	value: async function getBalance(id) {
-		let user = profile.get(id);
-		if (!user) user = await profile.newUser(id);
-		return user ? Math.floor(user.balance) : 0;
-	},
-});
-
-
 Reflect.defineProperty(profile, 'setClass', {
 	value: async function setClass(id, c) {
 		let user = profile.get(id);
@@ -162,6 +150,12 @@ Reflect.defineProperty(profile, 'setClass', {
 		user.curMP = c.stats.base.mp;
 		user.class = JSON.stringify(c);
 		user.stats = JSON.stringify(c.stats.base);
+
+		user.skills = JSON.stringify(c.startSkills);
+		for (let i = 1; i < 6; i++) {
+if (c.startSkills[i] != null) {await profile.addSkill(id, profile.getSkill(c.startSkills[i]));}
+}
+
 		return user.save();
 	},
 });
@@ -173,24 +167,16 @@ Reflect.defineProperty(profile, 'getClass', {
 		return user ? JSON.parse(user.class) : null;
 	},
 });
-
-
-Reflect.defineProperty(profile, 'getStats', {
-	value: async function getStats(id) {
-		let user = profile.get(id);
-		if (!user) user = await profile.newUser(id);
-		if (!user.class) return null;
-		return user ? JSON.parse(user.stats) : null;
-	},
-});
-
-
 Reflect.defineProperty(profile, 'addExp', {
 	value: async function addExp(id, amount, message) {
 		let user = profile.get(id);
 		if (!user) user = await profile.newUser(id);
 		const classInfo = await profile.getClass(id);
-		if (!classInfo) return message.reply('You dont have a class yet so you cant gain experience!\nUse the command `class` to get a class`');
+		if (!classInfo) {
+return message.reply(
+				'You dont have a class yet so you cant gain experience!\nUse the command `class` to get a class`',
+			);
+}
 
 		user.exp += Number(amount);
 		user.save();
@@ -204,12 +190,16 @@ Reflect.defineProperty(profile, 'levelInfo', {
 
 		const exponent = 1.5;
 		const baseExp = 1000;
-		let expNeeded = baseExp / 10 * Math.floor(baseExp / 100 * Math.pow(user.level, exponent));
+		let expNeeded =
+			(baseExp / 10) *
+			Math.floor((baseExp / 100) * Math.pow(user.level, exponent));
 
 		while (user.exp >= expNeeded && user.level < 60) {
 			const classInfo = await profile.getClass(id);
 			if (!classInfo) {
-				message.reply('You dont have a class yet so you cant gain experience!\nUse the command `class` to get a class`');
+				message.reply(
+					'You dont have a class yet so you cant gain experience!\nUse the command `class` to get a class`',
+				);
 				return {
 					level: user.level,
 					exp: user.exp,
@@ -221,7 +211,9 @@ Reflect.defineProperty(profile, 'levelInfo', {
 
 			user.level++;
 			user.exp -= expNeeded;
-			expNeeded = baseExp / 10 * Math.floor(baseExp / 100 * Math.pow(user.level, exponent));
+			expNeeded =
+				(baseExp / 10) *
+				Math.floor((baseExp / 100) * Math.pow(user.level, exponent));
 			stats.hp += statGrowth.hp;
 			user.curHP += statGrowth.hp;
 			stats.mp += statGrowth.mp;
@@ -253,6 +245,41 @@ Reflect.defineProperty(profile, 'levelInfo', {
 });
 
 
+// USERS
+Reflect.defineProperty(profile, 'getUser', {
+	value: async function getUser(id) {
+		let user = profile.get(id);
+		if (!user) user = await profile.newUser(id);
+		return user;
+	},
+});
+
+Reflect.defineProperty(profile, 'addMoney', {
+	value: async function addMoney(id, amount) {
+		let user = profile.get(id);
+		if (!user) user = await profile.newUser(id);
+
+		user.balance += Number(amount);
+		return user.save();
+	},
+});
+Reflect.defineProperty(profile, 'getBalance', {
+	value: async function getBalance(id) {
+		let user = profile.get(id);
+		if (!user) user = await profile.newUser(id);
+		return user ? Math.floor(user.balance) : 0;
+	},
+});
+
+Reflect.defineProperty(profile, 'getStats', {
+	value: async function getStats(id) {
+		let user = profile.get(id);
+		if (!user) user = await profile.newUser(id);
+		if (!user.class) return null;
+		return user ? JSON.parse(user.stats) : null;
+	},
+});
+
 Reflect.defineProperty(profile, 'getDaily', {
 	value: async function getDaily(id) {
 		let user = profile.get(id);
@@ -263,7 +290,6 @@ Reflect.defineProperty(profile, 'getDaily', {
 		if (moment(dCheck).isBefore(now)) return true;
 		else return dCheck.format('dddd HH:mm');
 	},
-
 });
 Reflect.defineProperty(profile, 'setDaily', {
 	value: async function setDaily(id) {
@@ -275,7 +301,6 @@ Reflect.defineProperty(profile, 'setDaily', {
 		return user.save();
 	},
 });
-
 
 Reflect.defineProperty(profile, 'getHourly', {
 	value: async function getHourly(id) {
@@ -299,7 +324,6 @@ Reflect.defineProperty(profile, 'setHourly', {
 	},
 });
 
-
 Reflect.defineProperty(profile, 'getWeekly', {
 	value: async function getWeekly(id) {
 		let user = profile.get(id);
@@ -310,7 +334,6 @@ Reflect.defineProperty(profile, 'getWeekly', {
 		if (moment(wCheck).isBefore(now)) return true;
 		else return wCheck.format('dddd HH:mm');
 	},
-
 });
 Reflect.defineProperty(profile, 'setWeekly', {
 	value: async function setWeekly(id) {
@@ -322,7 +345,6 @@ Reflect.defineProperty(profile, 'setWeekly', {
 		return user.save();
 	},
 });
-
 
 Reflect.defineProperty(profile, 'setVote', {
 	value: async function setVote(id) {
@@ -346,7 +368,6 @@ Reflect.defineProperty(profile, 'getVote', {
 	},
 });
 
-
 Reflect.defineProperty(profile, 'newUser', {
 	value: async function newUser(id) {
 		const now = moment();
@@ -360,13 +381,14 @@ Reflect.defineProperty(profile, 'newUser', {
 			lastWeekly: now.subtract(8, 'days'),
 			lastVote: now.subtract(1, 'days'),
 			stats: {},
-
 		});
 		profile.set(id, user);
 		return user;
 	},
 });
 
+
+// GUILDS
 Reflect.defineProperty(guildProfile, 'newGuild', {
 	value: async function newGuild(id) {
 		const guild = await Guilds.create({
@@ -384,7 +406,6 @@ Reflect.defineProperty(guildProfile, 'getPrefix', {
 		if (!guild) guild = await guildProfile.newGuild(id);
 		return guild ? guild.prefix : 0;
 	},
-
 });
 Reflect.defineProperty(guildProfile, 'setPrefix', {
 	value: async function setPrefix(id, newPrefix) {

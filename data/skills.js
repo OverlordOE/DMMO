@@ -3,15 +3,15 @@ module.exports = {
 	slash: {
 		name: 'slash',
 		emoji: '⚔️',
-		tags: ['active', 'neutral', 'attack'],
+		description: '',
+		class: 'all',
+		type: 'attack',
 		manaCost: 0.1,
 		damageType: 'physical',
 		mult: {
 			
 		}, 
-
-	}
-
+	},
 
 
 };

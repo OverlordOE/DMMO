@@ -21,9 +21,14 @@ module.exports = {
 				int: 4,
 			},
 		},
-
+		startSkills: {
+			1: 'slash',
+			2: null,
+			3: null,
+			4: null,
+			5: null,
+		},
 	},
-
 	rogue: {
 		name: 'Rogue',
 		colour: '#afb507',
@@ -45,8 +50,14 @@ module.exports = {
 				int: 5,
 			},
 		},
+		startSkills: {
+			1: 'slash',
+			2: null,
+			3: null,
+			4: null,
+			5: null,
+		},
 	},
-
 	hunter: {
 		name: 'Hunter',
 		colour: '#28a85c',
@@ -67,6 +78,13 @@ module.exports = {
 				con: 4,
 				int: 5,
 			},
+		},
+		startSkills: {
+			1: 'slash',
+			2: null,
+			3: null,
+			4: null,
+			5: null,
 		},
 	},
 	gunner: {
@@ -90,8 +108,14 @@ module.exports = {
 				int: 5,
 			},
 		},
+		startSkills: {
+			1: 'slash',
+			2: null,
+			3: null,
+			4: null,
+			5: null,
+		},
 	},
-
 	monk: {
 		name: 'Monk',
 		colour: '#1295db',
@@ -113,8 +137,14 @@ module.exports = {
 				int: 6,
 			},
 		},
+		startSkills: {
+			1: 'slash',
+			2: null,
+			3: null,
+			4: null,
+			5: null,
+		},
 	},
-
 	crusader: {
 		name: 'Crusader',
 		colour: '#e0fa1e',
@@ -136,8 +166,14 @@ module.exports = {
 				int: 6,
 			},
 		},
+		startSkills: {
+			1: 'slash',
+			2: null,
+			3: null,
+			4: null,
+			5: null,
+		},
 	},
-
 	wizard: {
 		name: 'Wizard',
 		colour: '#c515e8',
@@ -159,8 +195,14 @@ module.exports = {
 				int: 7,
 			},
 		},
+		startSkills: {
+			1: 'slash',
+			2: null,
+			3: null,
+			4: null,
+			5: null,
+		},
 	},
-
 	warlock: {
 		name: 'Warlock',
 		colour: '#3d0f8c',
@@ -181,6 +223,13 @@ module.exports = {
 				con: 6,
 				int: 7,
 			},
+		},
+		startSkills: {
+			1: 'slash',
+			2: null,
+			3: null,
+			4: null,
+			5: null,
 		},
 	},
 

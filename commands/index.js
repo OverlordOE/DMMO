@@ -5,6 +5,7 @@ module.exports = {
 	Buy: require('./buy'),
 	Sell: require('./sell'),
 	Profile: require('./profile'),
+	MySkills: require('./myskills'),
 	Class: require('./class'),
 	Quest: require('./quest'),
 	Vote: require('./vote'),

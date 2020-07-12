@@ -19,11 +19,16 @@ module.exports = {
 		else if (args[0] == 'item') {
 			const item = await profile.getItem(args[1]);
 			profile.addItem(target.id, item, args[2]);
-			return message.channel.send(`Added **${args[1]}** to ${target}`);
+			return message.channel.send(`Added **${args[2]}** __${args[1]}__ to ${target}`);
 		}
 		else if (args[0] == 'exp') {
 			await profile.addExp(target.id, args[1], message);
 			return message.channel.send(`Added **${args[1]}** EXP to ${target}`);
+		}
+		else if (args[0] == 'skill') {
+			const item = await profile.getSkill(args[1]);
+			profile.addSkill(target.id, item);
+			return message.channel.send(`Added **${args[1]}** to ${target}`);
 		}
 
 
