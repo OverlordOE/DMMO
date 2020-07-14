@@ -53,7 +53,7 @@ module.exports = {
 			for (let i = 1; i < 6; i++) {
 				if (equipped[i]) {
 					const skill = skillInfo[equipped[i]];
-					equippedSkills += `Slot ${i}: ${skill.emoji} __${equipped[1]}__ / ${skill.class} / ${skill.type} / ${skill.manaCost * 100}%\n`;
+					equippedSkills += `Slot ${i}: ${skill.emoji} __${equipped[i]}__ / ${skill.class} / ${skill.type} / ${skill.manaCost * 100}%\n`;
 				}
 				else equippedSkills += `Slot ${i}: Nothing\n`;
 			}

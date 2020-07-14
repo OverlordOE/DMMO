@@ -30,6 +30,11 @@ module.exports = {
 			profile.addSkill(target.id, item);
 			return message.channel.send(`Added **${args[1]}** to ${target}`);
 		}
+		else if (args[0] == 'skill') {
+			const item = await profile.getSkill(args[1]);
+			profile.addSkill(target.id, item);
+			return message.channel.send(`Added **${args[1]}** to ${target}`);
+		}
 
 
 		if (!amount || isNaN(amount)) return message.channel.send(`Sorry *${message.author}*, that's an invalid amount.`);

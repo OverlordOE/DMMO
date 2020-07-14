@@ -23,7 +23,7 @@ module.exports = {
 		},
 		startSkills: {
 			1: 'slash',
-			2: null,
+			2: 'shield',
 			3: null,
 			4: null,
 			5: null,
@@ -52,7 +52,7 @@ module.exports = {
 		},
 		startSkills: {
 			1: 'slash',
-			2: null,
+			2: 'shield',
 			3: null,
 			4: null,
 			5: null,
@@ -81,7 +81,7 @@ module.exports = {
 		},
 		startSkills: {
 			1: 'slash',
-			2: null,
+			2: 'shield',
 			3: null,
 			4: null,
 			5: null,
@@ -110,7 +110,7 @@ module.exports = {
 		},
 		startSkills: {
 			1: 'slash',
-			2: null,
+			2: 'shield',
 			3: null,
 			4: null,
 			5: null,
@@ -139,7 +139,7 @@ module.exports = {
 		},
 		startSkills: {
 			1: 'slash',
-			2: null,
+			2: 'shield',
 			3: null,
 			4: null,
 			5: null,
@@ -168,7 +168,7 @@ module.exports = {
 		},
 		startSkills: {
 			1: 'slash',
-			2: null,
+			2: 'shield',
 			3: null,
 			4: null,
 			5: null,
@@ -197,7 +197,7 @@ module.exports = {
 		},
 		startSkills: {
 			1: 'slash',
-			2: null,
+			2: 'shield',
 			3: null,
 			4: null,
 			5: null,
@@ -226,7 +226,7 @@ module.exports = {
 		},
 		startSkills: {
 			1: 'slash',
-			2: null,
+			2: 'shield',
 			3: null,
 			4: null,
 			5: null,

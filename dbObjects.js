@@ -153,8 +153,12 @@ Reflect.defineProperty(profile, 'setClass', {
 
 		user.skills = JSON.stringify(c.startSkills);
 		for (let i = 1; i < 6; i++) {
-if (c.startSkills[i] != null) {await profile.addSkill(id, profile.getSkill(c.startSkills[i]));}
-}
+			if (c.startSkills[i] != null) {
+				const skill = profile.getSkill(c.startSkills[i]);
+				await profile.addSkill(id, skill);
+				await profile.setSkill(id, skill, i);
+			}
+		}
 
 		return user.save();
 	},
@@ -173,10 +177,10 @@ Reflect.defineProperty(profile, 'addExp', {
 		if (!user) user = await profile.newUser(id);
 		const classInfo = await profile.getClass(id);
 		if (!classInfo) {
-return message.reply(
+			return message.reply(
 				'You dont have a class yet so you cant gain experience!\nUse the command `class` to get a class`',
 			);
-}
+		}
 
 		user.exp += Number(amount);
 		user.save();
