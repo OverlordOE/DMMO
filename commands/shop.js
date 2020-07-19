@@ -9,18 +9,18 @@ module.exports = {
 	args: false,
 	usage: '',
 
-	async execute(message, args, msgUser, profile, guildProfile, client, logger, cooldowns) {
+	async execute(message, args, msgUser, character, guildProfile, client, logger, cooldowns) {
 
 		let consumable = '__**Consumables:**__\n';
 		let collectables = '__**Collectables:**__\n';
 		let chests = '__**Chests:**__\n';
-		
+
 		let i;
 		for (i in items) {
 			if (items[i].cost) {
-				if (items[i].ctg == 'consumable') { consumable += `${items[i].emoji} ${items[i].name}: **${items[i].cost}💰**\n`; }
-				else if (items[i].ctg == 'collectables') { collectables += `${items[i].emoji} ${items[i].name}: **${items[i].cost}💰**\n`; }
-				else if (items[i].ctg == 'chests') { chests += `${items[i].emoji} ${items[i].name}: **${items[i].cost}💰**\n`; }
+				if (items[i].type == 'consumable') { consumable += `${items[i].emoji} ${items[i].name}: **${items[i].cost}💰**\n`; }
+				else if (items[i].type == 'collectables') { collectables += `${items[i].emoji} ${items[i].name}: **${items[i].cost}💰**\n`; }
+				else if (items[i].type == 'chests') { chests += `${items[i].emoji} ${items[i].name}: **${items[i].cost}💰**\n`; }
 			}
 		}
 

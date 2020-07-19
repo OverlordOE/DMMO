@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 const winston = require('winston');
-const { Users, Guilds, profile, guildProfile } = require('./dbObjects');
+const { Users, Guilds, character, guildProfile } = require('./dbObjects');
 const clientCommands = require('./commands');
 const moment = require('moment');
 const client = new Discord.Client();
@@ -38,7 +38,7 @@ client.login(token);
 client.on('ready', async () => {
 	try {
 		const storedUsers = await Users.findAll();
-		storedUsers.forEach(b => profile.set(b.user_id, b));
+		storedUsers.forEach(b => character.set(b.user_id, b));
 		const storedGuilds = await Guilds.findAll();
 		storedGuilds.forEach(b => guildProfile.set(b.guild_id, b));
 		logger.log('info', `Logged in as ${client.user.tag}!`);
@@ -64,8 +64,8 @@ client.on('message', async message => {
 	const prefix = await guildProfile.getPrefix(message.guild.id);
 	const now = Date.now();
 	const id = message.author.id;
-	let user = profile.get(id);
-	if (!user) user = await profile.newUser(id);
+	let user = character.get(id);
+	if (!user) user = await character.newUser(id);
 
 
 	// split message for further use
@@ -85,7 +85,7 @@ client.on('message', async message => {
 	if (command.category == 'debug' && (id != 137920111754346496 && id != 139030319784263681)) return message.channel.send('You are not the owner of this client!');
 	if (command.category == 'admin' && !message.member.hasPermission('ADMINISTRATOR') && id != 137920111754346496 && id != 139030319784263681) return message.channel.send('You need Admin privileges to use this command!');
 
-	
+
 	// if the command is used wrongly correct the user
 	if (command.args && !args.length) {
 		let reply = `You didn't provide any arguments, ${message.author}!`;
@@ -125,7 +125,7 @@ client.on('message', async message => {
 	// execute command
 	logger.log('info', `${message.author.tag} Called command: ${command.name}, in guild: ${message.guild.name}`);
 	try {
-		command.execute(message, args, user, profile, guildProfile, client, logger, cooldowns);
+		command.execute(message, args, user, character, guildProfile, client, logger, cooldowns);
 	}
 	catch (e) {
 		logger.error(e.stack);

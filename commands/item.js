@@ -8,7 +8,7 @@ module.exports = {
 	args: false,
 	usage: '<item>',
 
-	async execute(message, args, msgUser, profile, guildProfile, client, logger, cooldowns) {
+	async execute(message, args, msgUser, character, guildProfile, client, logger, cooldowns) {
 		let temp = '';
 
 		for (let i = 0; i < args.length; i++) {
@@ -16,13 +16,13 @@ module.exports = {
 			else temp += `${args[i]}`;
 		}
 
-		const item = await profile.getItem(temp);
+		const item = await character.getItem(temp);
 		if (!item) return msgUser.reply(`${item} is not a valid item`);
 		const embed = new Discord.MessageEmbed()
 			.setTitle(`${item.emoji}__${item.name}(s)__`)
 			.setDescription(item.description)
 			.addField('Cost', `**${item.cost}💰**`, true)
-			.addField('Category', item.ctg, true)
+			.addField('Category', item.type, true)
 			.addField('Rarity', item.rarity, true)
 			.setTimestamp()
 			.setFooter('DMMO', client.user.displayAvatarURL())

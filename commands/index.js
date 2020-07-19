@@ -4,6 +4,7 @@ module.exports = {
 	Shop: require('./shop'),
 	Buy: require('./buy'),
 	Sell: require('./sell'),
+	Use: require('./use'),
 	Profile: require('./profile'),
 	MySkills: require('./myskills'),
 	Class: require('./class'),

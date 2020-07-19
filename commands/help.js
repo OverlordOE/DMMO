@@ -7,7 +7,7 @@ module.exports = {
 	usage: '<command name>',
 	args: false,
 
-	async execute(message, args, msgUser, profile, guildProfile, client, logger, cooldowns) {
+	async execute(message, args, msgUser, character, guildProfile, client, logger, cooldowns) {
 		const { commands } = message.client;
 		let adminCommands = '';
 		let musicCommands = '';

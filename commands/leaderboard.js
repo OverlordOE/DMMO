@@ -8,13 +8,13 @@ module.exports = {
 	args: false,
 	usage: '<page>',
 
-	async execute(message, args, msgUser, profile, guildProfile, client, logger, cooldowns) {
+	async execute(message, args, msgUser, character, guildProfile, client, logger, cooldowns) {
 
 		const filter = (reaction, user) => {
 			return ['◀️', '▶️'].includes(reaction.emoji.name) && user.id === message.author.id;
 		};
 
-		const list = profile.sort((a, b) => b.balance - a.balance)
+		const list = character.sort((a, b) => b.balance - a.balance)
 			.filter(user => client.users.cache.has(user.user_id))
 			.first(50)
 			.map((user, position) => `\n__**${position + 1}.**__ *${client.users.cache.get(user.user_id).tag}*: **${Math.floor(user.balance)}💰**`);

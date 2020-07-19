@@ -5,8 +5,8 @@ module.exports = {
 		emoji: '⚔️',
 		description: '',
 		class: 'all',
-		type: 'attack',
-		manaCost: 0.1,
+		type: ['attack'],
+		manaCost: 0.4,
 		damageType: 'physical',
 		mult: {
 			damage: 0.2,
@@ -18,7 +18,7 @@ module.exports = {
 		emoji: '🛡️',
 		description: '',
 		class: 'all',
-		type: 'debuff',
+		type: ['buff'],
 		manaCost: 0.08,
 		damageType: 'physical',
 		debuff: {

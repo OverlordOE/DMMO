@@ -10,18 +10,18 @@ module.exports = {
 	usage: '<user>',
 
 
-	async execute(message, args, msgUser, profile, guildProfile, client, logger, cooldowns) {
+	async execute(message, args, msgUser, character, guildProfile, client, logger, cooldowns) {
 		const target = message.mentions.users.first() || message.author;
-		const items = await profile.getInventory(target.id);
+		const items = await character.getInventory(target.id);
 		const filter = (reaction, user) => {
 			return user.id === message.author.id;
 		};
 
 		const avatar = target.displayAvatarURL();
-		const userProfile = await profile.getUser(target.id);
-		const levelInfo = await profile.levelInfo(target.id, message);
+		const userProfile = await character.getUser(target.id);
+		const levelInfo = await character.levelInfo(target.id, message);
 
-		const userClass = await profile.getClass(target.id);
+		const userClass = await character.getClass(target.id);
 		let className;
 		let colour;
 		if (userClass) {
@@ -36,10 +36,10 @@ module.exports = {
 		let exp = `${levelInfo.exp}/${levelInfo.expNeeded}`;
 		if (levelInfo.level == 60) exp = '__**Max**__';
 
-		let daily = await profile.getDaily(target.id);
-		let hourly = await profile.getHourly(target.id);
-		let weekly = await profile.getWeekly(target.id);
-		let vote = await profile.getVote(target.id);
+		let daily = await character.getDaily(target.id);
+		let hourly = await character.getHourly(target.id);
+		let weekly = await character.getWeekly(target.id);
+		let vote = await character.getVote(target.id);
 
 		if (daily === true) daily = 'now';
 		if (hourly === true) hourly = 'now';
@@ -90,7 +90,7 @@ module.exports = {
 		else { invEmbed.addField('Inventory:', `*${target.tag}* has nothing!`); }
 
 		if (userClass) {
-			const stats = await profile.getStats(target.id);
+			const stats = await character.getStats(target.id);
 			charEmbed.addFields(
 				{ name: '\u200B', value: '\u200B' },
 				{ name: 'Health', value: `${msgUser.curHP}/${stats.hp}<:health:730849477765890130>`, inline: true },

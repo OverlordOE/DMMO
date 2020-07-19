@@ -11,9 +11,9 @@ module.exports = {
 	args: false,
 	usage: '',
 
-	async execute(message, args, msgUser, profile, guildProfile, client, logger, cooldowns) {
+	async execute(message, args, msgUser, character, guildProfile, client, logger, cooldowns) {
 
-		const uitems = await profile.getInventory(message.author.id);
+		const uitems = await character.getInventory(message.author.id);
 		const filter = m => m.author.id === message.author.id;
 		let amount = 0;
 		let temp = '';
@@ -36,15 +36,15 @@ module.exports = {
 				else temp += `${args[i]}`;
 			}
 
-			item = await profile.getItem(temp);
+			item = await character.getItem(temp);
 			if (item) {
 				uitems.map(i => {
 					if (i.name == item.name) {
 						if (amount == 'all') {
 							amount = i.amount;
-							sell(profile, sentMessage, amount, embed, item, message);
+							sell(character, sentMessage, amount, embed, item, message);
 						}
-						else if (i.amount >= amount) sell(profile, sentMessage, amount, embed, item, message);
+						else if (i.amount >= amount) sell(character, sentMessage, amount, embed, item, message);
 						else return sentMessage.edit(embed.setDescription(`You only have **${i.amount}/${amount}** of the __${item.name}(s)__ needed!`));
 					}
 				});
@@ -53,7 +53,7 @@ module.exports = {
 				message.channel.awaitMessages(filter, { max: 1, time: 60000 })
 
 					.then(async collected => {
-						const item = await profile.getItem(collected.first().content);
+						const item = await character.getItem(collected.first().content);
 						if (!item) return sentMessage.edit(embed.setDescription(`\`${item}\` is not a valid item.`));
 
 						let hasItem = false;
@@ -77,7 +77,7 @@ module.exports = {
 										return sentMessage.edit(embed.setDescription(`You don't have enough __${item.name}(s)__!`));
 									}
 
-									sell(profile, sentMessage, amount, embed, item, message);
+									sell(character, sentMessage, amount, embed, item, message);
 
 								})
 								.catch(e => {
@@ -96,15 +96,15 @@ module.exports = {
 };
 
 
-async function sell(profile, sentMessage, amount, embed, item, message) {
+async function sell(character, sentMessage, amount, embed, item, message) {
 
 	if (!Number.isInteger(amount)) return sentMessage.edit(embed.setDescription(`**${amount}** is not a number`));
 	else if (amount < 1) amount = 1;
 
 	const refundAmount = 0.8 * item.cost * amount;
-	await profile.removeItem(message.author.id, item, amount);
-	await profile.addMoney(message.author.id, refundAmount);
+	await character.removeItem(message.author.id, item, amount);
+	await character.addMoney(message.author.id, refundAmount);
 
-	const balance = await profile.getBalance(message.author.id);
+	const balance = await character.getBalance(message.author.id);
 	sentMessage.edit(embed.setDescription(`You've refunded ${amount} __${item.name}(s)__ and received **${Math.floor(refundAmount)}💰** back.\nYour balance is **${balance}💰**!`));
 }

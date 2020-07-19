@@ -2,19 +2,19 @@ const Discord = require('discord.js');
 const skillInfo = require('../data/skills');
 module.exports = {
 	name: 'myskills',
-	summary: 'Shows profile of you or the tagger user',
-	description: 'Shows profile of you or the tagger user.',
+	summary: 'Shows character of you or the tagger user',
+	description: 'Shows character of you or the tagger user.',
 	category: 'info',
 	aliases: ['ms', 'myskill', 'setskill'],
 	args: false,
 	usage: '<user>',
 
 
-	async execute(message, args, msgUser, profile, guildProfile, client, logger, cooldowns) {
+	async execute(message, args, msgUser, character, guildProfile, client, logger, cooldowns) {
 		const avatar = message.author.displayAvatarURL();
-		const skills = await profile.getUserSkills(message.author.id);
+		const skills = await character.getCharacterSkills(message.author.id);
 
-		const userClass = await profile.getClass(message.author.id);
+		const userClass = await character.getClass(message.author.id);
 		let colour;
 		if (userClass) colour = userClass.colour;
 		else return message.reply('you need to have a class to equip skills.\nUse the command `class` to choose a class');
@@ -28,9 +28,9 @@ module.exports = {
 			else if (temp.length > 2) temp += ` ${args[i]}`;
 			else temp += `${args[i]}`;
 		}
-		const equipSkill = await profile.getSkill(temp);
+		const equipSkill = await character.getSkill(temp);
 		if (equipSkill) {
-			if (await profile.setSkill(message.author.id, equipSkill, slot)) {
+			if (await character.setSkill(message.author.id, equipSkill, slot)) {
 				message.reply(`Equipped ${equipSkill.name} to slot ${slot}`);
 			}
 			else message.reply('You dont have that skill or it is of the wrong class');

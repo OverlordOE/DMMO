@@ -9,7 +9,7 @@ module.exports = {
 	cooldown: 5,
 	args: false,
 
-	async execute(message, args, msgUser, profile, guildProfile, client, logger, cooldowns) {
+	async execute(message, args, msgUser, character, guildProfile, client, logger, cooldowns) {
 
 		const filter = m => m.author.id === message.author.id;
 		let amount = 0;
@@ -35,16 +35,16 @@ module.exports = {
 				else temp += `${args[i]}`;
 			}
 
-			item = await profile.getItem(temp);
+			item = await character.getItem(temp);
 
 			if (item) {
-				buy(profile, sentMessage, amount, embed, item, message);
+				buy(character, sentMessage, amount, embed, item, message);
 			}
 			else {
 				message.channel.awaitMessages(filter, { max: 1, time: 60000 })
 
 					.then(async collected => {
-						item = await profile.getItem(collected.first().content);
+						item = await character.getItem(collected.first().content);
 						if (!item) return sentMessage.edit(embed.setDescription(`${collected.first().content} is not a valid item.`));
 						collected.first().delete().catch(e => logger.error(e.stack));
 
@@ -55,7 +55,7 @@ module.exports = {
 									amount = parseInt(collected.first().content);
 									collected.first().delete().catch(e => logger.error(e.stack));
 
-									buy(profile, sentMessage, amount, embed, item, message);
+									buy(character, sentMessage, amount, embed, item, message);
 
 								})
 								.catch(e => {
@@ -74,7 +74,7 @@ module.exports = {
 	},
 };
 
-async function buy(profile, sentMessage, amount, embed, item, message) {
+async function buy(character, sentMessage, amount, embed, item, message) {
 
 	if (!Number.isInteger(amount)) {
 		return sentMessage.edit(embed.setDescription(`**${amount}** is not a number`));
@@ -83,15 +83,15 @@ async function buy(profile, sentMessage, amount, embed, item, message) {
 		amount = 1;
 	}
 
-	let balance = await profile.getBalance(message.author.id);
+	let balance = await character.getBalance(message.author.id);
 	const cost = amount * item.cost;
 	if (cost > balance) {
 		return sentMessage.edit(embed.setDescription(`You currently have **${balance}💰**, but __**${amount}**__ __${item.name}(s)__ costs **${cost}💰**!`));
 	}
 
-	await profile.addItem(message.author.id, item, amount);
-	profile.addMoney(message.author.id, -cost);
+	await character.addItem(message.author.id, item, amount);
+	character.addMoney(message.author.id, -cost);
 
-	balance = await profile.getBalance(message.author.id);
+	balance = await character.getBalance(message.author.id);
 	sentMessage.edit(embed.setDescription(`You've bought: __**${amount}**__ __${item.name}(s)__.\n\nCurrent balance is **${balance}💰**.`));
 }

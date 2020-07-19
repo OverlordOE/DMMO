@@ -1,4 +1,5 @@
 const Discord = require('discord.js');
+const { exitOnError } = require('winston');
 module.exports = {
 	name: 'quest',
 	summary: 'Go on a quest to kill mobs',
@@ -8,13 +9,13 @@ module.exports = {
 	args: false,
 	usage: '',
 
-	async execute(message, args, msgUser, profile, guildProfile, client, logger, cooldowns) {
+	async execute(message, args, msgUser, character, guildProfile, client, logger, cooldowns) {
 
 		if (!msgUser.stats) return message.reply('you need to have a class to quest.\nUse the command `class` to choose a class');
 		if (msgUser.curHP < 1) return message.reply('you dont have enough hp to quest.\nDrink a healing potion or rest at an inn to regain **HP**.');
 		const stats = JSON.parse(msgUser.stats);
 		const userskills = JSON.parse(msgUser.skills);
-		const userClass = await profile.getClass(message.author.id);
+		const userClass = await character.getClass(message.author.id);
 
 		let playerDmg = 0;
 		let playerDmgMod = 1;
@@ -28,7 +29,7 @@ module.exports = {
 		const userSkillEmojis = [];
 		let i;
 		for (i in userskills) {
-			const skill = profile.getSkill(userskills[i]);
+			const skill = character.getSkill(userskills[i]);
 			if (skill) {
 				userSkillList.push(skill);
 				userSkillEmojis.push(skill.emoji);
@@ -41,7 +42,7 @@ module.exports = {
 		const monster = {
 			name: 'test monster',
 			damage: [5, 5],
-			hp: 40,
+			hp: 200,
 			picture: 'monster_1.png',
 		};
 		let description = '';
@@ -72,20 +73,9 @@ module.exports = {
 				const collector = sentMessage.createReactionCollector(filter);
 
 				collector.on('collect', (reaction) => {
+
 					reaction.users.remove(message.author.id);
-
-					monsterDmg = 0;
-					monsterDmgMod = 1;
-					monsterDmgDebuff = 1;
-
 					playerTurn(reaction);
-
-					playerDmg = 0;
-					playerDmgMod = 1;
-					playerDmgDebuff = 1;
-
-					setTimeout(() => monsterTurn(), 1000);
-
 				});
 				collector.on('end', () => sentMessage.reactions.removeAll());
 
@@ -97,18 +87,19 @@ module.exports = {
 						totalDamage = Math.floor(playerDmg * playerDmgMod);
 						monster.hp -= totalDamage;
 						description += `_**You**_ use __*Clap*__ and deal __**${totalDamage}**__ damage to __${monster.name}__.\n`;
-
-						if (monster.hp <= 0) {
-							const reward = Math.floor(80 + (Math.random() * 60)) * msgUser.level;
-							profile.addExp(message.author.id, reward, message);
-							description += `\n_**You**_ have slain __${monster.name}__ and gained **${reward}** EXP!\n\n`;
-							collector.stop();
-						}
-						setEmbed();
 					}
 					else {
 						const skill = userSkillList[userSkillEmojis.indexOf(reaction.emoji.name)];
-						msgUser.curMP -= Math.floor(stats.mp * skill.manaCost);
+
+						// Remove Mana
+						const manaCost = Math.floor(stats.mp * skill.manaCost);
+						if (msgUser.curMP < manaCost) {
+							return message.reply(`${skill.name} costs ${manaCost}<:mana:730849477640061029> to use but you only have ${msgUser.curMP}<:mana:730849477640061029>`).then(manaMessage => {
+								manaMessage.delete({ timeout: 5000 });
+							});
+						}
+						msgUser.curMP -= manaCost;
+
 
 						// add buffs
 						if (skill.add) {
@@ -129,31 +120,38 @@ module.exports = {
 								else stats[skillEffect] *= skill.debuff[skillEffect] + 1;
 							}
 						}
-						
+
 
 						if (skill.type == 'attack') {
 							playerDmg += (stats.str / 5) + 5;
 							console.log(playerDmg);
 							console.log(playerDmgMod);
 							console.log(playerDmgDebuff);
-							totalDamage = Math.floor(playerDmg * playerDmgMod * playerDmgDebuff);
+							totalDamage = Math.floor(playerDmg * playerDmgMod * playerDmgDebuff * (1 + (Math.random() * 0.1)));
 							monster.hp -= totalDamage;
 							description += `_**You**_ use __*${skill.name}*__ and deal __**${totalDamage}**__ damage to __${monster.name}__.\n`;
 						}
 						else description += `_**You**_ use __*${skill.name}*__.\n`;
-
-						if (monster.hp <= 0) {
-							description += `\n_**You**_ have slain __${monster.name}__!\n`;
-							endGame(100);
-						}
-						setEmbed();
 					}
+					if (monster.hp <= 0) {
+						description += `\n_**You**_ have slain __${monster.name}__!\n`;
+						endGame(100);
+						return setEmbed();
+					}
+
+					setEmbed();
+
+					playerDmg = 0;
+					playerDmgMod = 1;
+					playerDmgDebuff = 1;
+
+					setTimeout(() => monsterTurn(), 1000);
 				}
 
 				function monsterTurn() {
 
-					monsterDmg = (monster.damage[0] + (monster.damage[1] * Math.random())) * msgUser.level;
-					totalDamage = Math.floor(monsterDmg * monsterDmgMod * monsterDmgDebuff);
+					monsterDmg = (monster.damage[0] + (monster.damage[1] * Math.random())) + msgUser.level;
+					totalDamage = Math.floor(monsterDmg * monsterDmgMod * monsterDmgDebuff * (1 + (Math.random() * 0.1)));
 					msgUser.curHP -= totalDamage;
 					description += `_**${monster.name}**_ uses __*Bite*__ and deals __**${totalDamage}**__ damage to __you__.\n\n`;
 
@@ -164,12 +162,16 @@ module.exports = {
 						endGame(20);
 					}
 					setEmbed();
+
+					monsterDmg = 0;
+					monsterDmgMod = 1;
+					monsterDmgDebuff = 1;
 				}
 
 				function endGame(exp) {
 					msgUser.curMP = stats.mp;
 					const reward = Math.floor((exp + (Math.random() * exp / 5)) * msgUser.level);
-					profile.addExp(message.author.id, reward, message);
+					character.addExp(message.author.id, reward, message);
 					description += `\n_**You**_ gained **${reward}** EXP.\n`;
 					collector.stop();
 				}

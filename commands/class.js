@@ -11,8 +11,8 @@ module.exports = {
 	usage: '',
 
 
-	async execute(message, args, msgUser, profile, guildProfile, client, logger, cooldowns) {
-		
+	async execute(message, args, msgUser, character, guildProfile, client, logger, cooldowns) {
+
 
 		const embed = new Discord.MessageEmbed()
 			.setTitle('**Class Selection**')
@@ -214,7 +214,7 @@ module.exports = {
 								break;
 
 							case '✅':
-								profile.setClass(message.author.id, curClass);
+								character.setClass(message.author.id, curClass);
 								sentMessage.edit(embed.setColor(curClass.colour).setDescription(`You have chosen the class ${curClass.name}`));
 								sentMessage.reactions.removeAll();
 								break;
@@ -239,7 +239,7 @@ module.exports = {
 
 					sentMessage.awaitReactions(filter, { max: 1, time: 60000 })
 						.then(async () => {
-							await profile.resetClass(message.author.id);
+							await character.resetClass(message.author.id);
 							sentMessage.edit(embed.setDescription('Class reset.'));
 							sentMessage.reactions.removeAll();
 						});
