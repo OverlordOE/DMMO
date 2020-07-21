@@ -52,6 +52,7 @@ module.exports = {
 							 For more info contact: OverlordOE#0717
 			`);
 		}
+		else if (args[0] == 'viggo' || args[0] == 'virgil') message.reply('Vliegosaurus');
 		else {
 			const name = args[0].toLowerCase();
 			const command = commands.get(name) || commands.find(c => c.aliases && c.aliases.includes(name));
