@@ -54,6 +54,7 @@ Reflect.defineProperty(character, 'removeItem', {
 		throw Error(`User doesn't have the item: ${item.name}`);
 	},
 });
+
 Reflect.defineProperty(character, 'getInventory', {
 	value: async function getInventory(id) {
 		let user = character.get(id);
@@ -66,6 +67,45 @@ Reflect.defineProperty(character, 'getInventory', {
 Reflect.defineProperty(character, 'getItem', {
 	value: function getItem(itemName) {
 		if (items[itemName]) return items[itemName];
+		return false;
+	},
+});
+
+Reflect.defineProperty(character, 'equip', {
+	value: async function equip(id, equipment) {
+		let user = character.get(id);
+		if (!user) user = await character.newUser(id);
+		const userEquipment = await UserItems.findOne({
+			where: { user_id: id, name: equipment.name },
+		});
+		if (userEquipment) {
+			const equipped = JSON.parse(user.skills);
+			// const userClass = JSON.parse(user.class);
+			// if (userClass.name == equipment.class || equipment.class == 'all') {
+
+			if (equipment.slot == 'both hands') {
+				equipped['main hand'] == equipment.name;
+				equipped['off hand'] == equipment.name;
+			}
+			else if (equipment.slot == 'off hand' || equipment.slot == 'main hand') {
+
+				if (equipped['main hand']) {
+					const mainHand = items[equipped['main hand']];
+
+					if (mainHand.slot == 'both hands') {
+						equipped['main hand'] == null;
+						equipped['off hand'] == null;
+					}
+				}
+				equipped[equipment.slot] = equipment.name;
+			}
+			else equipped[equipment.slot] = equipment.name;
+
+			user.equipment = JSON.stringify(equipped);
+			character.calculateStats(id);
+			return user.save();
+			// }
+		}
 		return false;
 	},
 });
@@ -95,6 +135,7 @@ Reflect.defineProperty(character, 'removeSkill', {
 		throw Error(`User doesn't have the skill: ${skill.name}`);
 	},
 });
+
 Reflect.defineProperty(character, 'getCharacterSkills', {
 	value: async function getInventory(id) {
 		return UserSkills.findAll({ where: { user_id: id } });
@@ -134,7 +175,12 @@ Reflect.defineProperty(character, 'resetClass', {
 		if (!user) user = await character.newUser(id);
 
 		user.class = null;
+		user.baseStats = null;
 		user.stats = null;
+		user.equipment = null;
+		user.skills = null;
+		user.curHP = null;
+		user.curMP = null;
 		user.level = 1;
 		user.exp = 0;
 
@@ -149,15 +195,19 @@ Reflect.defineProperty(character, 'setClass', {
 		user.curHP = c.stats.base.hp;
 		user.curMP = c.stats.base.mp;
 		user.class = JSON.stringify(c);
-		user.stats = JSON.stringify(c.stats.base);
+		user.baseStats = JSON.stringify(c.stats.base);
 
 		user.skills = JSON.stringify(c.startSkills);
-		for (let i = 1; i < 6; i++) {
-			if (c.startSkills[i] != null) {
-				const skill = character.getSkill(c.startSkills[i]);
-				await character.addSkill(id, skill);
-				await character.setSkill(id, skill, i);
-			}
+		for (let i = 0; i < c.startSkills.length; i++) {
+			const skill = character.getSkill(c.startSkills[i]);
+			await character.addSkill(id, skill);
+			await character.setSkill(id, skill, i + 1);
+		}
+
+		for (let i = 0; i < c.startEquipment.length; i++) {
+			const equipment = character.getItem(c.startEquipment[i]);
+			await character.addItem(id, equipment);
+			await character.equip(id, equipment);
 		}
 
 		return user.save();
@@ -171,6 +221,7 @@ Reflect.defineProperty(character, 'getClass', {
 		return user ? JSON.parse(user.class) : null;
 	},
 });
+
 Reflect.defineProperty(character, 'addExp', {
 	value: async function addExp(id, amount, message) {
 		let user = character.get(id);
@@ -211,7 +262,7 @@ Reflect.defineProperty(character, 'levelInfo', {
 				};
 			}
 			const statGrowth = classInfo.stats.growth;
-			const stats = JSON.parse(user.stats);
+			const stats = JSON.parse(user.baseStats);
 
 			user.level++;
 			user.exp -= expNeeded;
@@ -226,7 +277,7 @@ Reflect.defineProperty(character, 'levelInfo', {
 			stats.dex += statGrowth.dex;
 			stats.con += statGrowth.con;
 			stats.int += statGrowth.int;
-			user.stats = JSON.stringify(stats);
+			user.baseStats = JSON.stringify(stats);
 			user.save();
 
 			message.reply(`you have leveled up to level ${user.level}.
@@ -250,7 +301,40 @@ Reflect.defineProperty(character, 'levelInfo', {
 
 
 // STATS
+Reflect.defineProperty(character, 'getBaseStats', {
+	value: async function getBaseStats(id) {
+		let user = character.get(id);
+		if (!user) user = await character.newUser(id);
+		if (!user.class) return null;
+		return user ? JSON.parse(user.baseStats) : null;
+	},
+});
+Reflect.defineProperty(character, 'getStats', {
+	value: async function getStats(id) {
+		let user = character.get(id);
+		if (!user) user = await character.newUser(id);
+		if (!user.class) return null;
+		return user ? JSON.parse(user.stats) : null;
+	},
+});
+Reflect.defineProperty(character, 'calculateStats', {
+	value: async function calculateStats(id) {
+		let user = character.get(id);
+		if (!user) user = await character.newUser(id);
+		if (!user.class) throw Error('User does not have a class');
+		const baseStats = JSON.parse(user.baseStats);
 
+		const stats = {
+
+
+		};
+
+
+		user.stats = JSON.stringify(stats);
+		user.save();
+		return stats;
+	},
+});
 
 
 // USERS
@@ -276,15 +360,6 @@ Reflect.defineProperty(character, 'getBalance', {
 		let user = character.get(id);
 		if (!user) user = await character.newUser(id);
 		return user ? Math.floor(user.balance) : 0;
-	},
-});
-
-Reflect.defineProperty(character, 'getStats', {
-	value: async function getStats(id) {
-		let user = character.get(id);
-		if (!user) user = await character.newUser(id);
-		if (!user.class) return null;
-		return user ? JSON.parse(user.stats) : null;
 	},
 });
 

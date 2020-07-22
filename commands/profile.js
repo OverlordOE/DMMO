@@ -89,8 +89,9 @@ module.exports = {
 		}
 		else { invEmbed.addField('Inventory:', `*${target.tag}* has nothing!`); }
 
+		
 		if (userClass) {
-			const stats = await character.getStats(target.id);
+			const stats = await character.getBaseStats(target.id);
 			charEmbed.addFields(
 				{ name: '\u200B', value: '\u200B' },
 				{ name: 'Health', value: `${msgUser.curHP}/${stats.hp}<:health:730849477765890130>`, inline: true },

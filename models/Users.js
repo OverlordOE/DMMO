@@ -40,6 +40,7 @@ module.exports = (sequelize, DataTypes) => {
 		},
 		
 		// stats
+		baseStats: DataTypes.JSON,
 		stats: DataTypes.JSON,
 		curHP: {
 			type: DataTypes.INTEGER,

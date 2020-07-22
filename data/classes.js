@@ -21,13 +21,8 @@ module.exports = {
 				int: 4,
 			},
 		},
-		startSkills: {
-			1: 'slash',
-			2: 'shield',
-			3: null,
-			4: null,
-			5: null,
-		},
+		startSkills: ['slash', 'shield'],
+		startEquipment: ['training_sword'],
 	},
 	rogue: {
 		name: 'Rogue',
@@ -50,13 +45,8 @@ module.exports = {
 				int: 5,
 			},
 		},
-		startSkills: {
-			1: 'slash',
-			2: 'shield',
-			3: null,
-			4: null,
-			5: null,
-		},
+		startSkills: ['slash', 'shield'],
+		startEquipment: ['training_sword'],
 	},
 	hunter: {
 		name: 'Hunter',
@@ -79,13 +69,8 @@ module.exports = {
 				int: 5,
 			},
 		},
-		startSkills: {
-			1: 'slash',
-			2: 'shield',
-			3: null,
-			4: null,
-			5: null,
-		},
+		startSkills: ['slash', 'shield'],
+		startEquipment: ['training_sword'],
 	},
 	gunner: {
 		name: 'Gunner',
@@ -108,13 +93,8 @@ module.exports = {
 				int: 5,
 			},
 		},
-		startSkills: {
-			1: 'slash',
-			2: 'shield',
-			3: null,
-			4: null,
-			5: null,
-		},
+		startSkills: ['slash', 'shield'],
+		startEquipment: ['training_sword'],
 	},
 	monk: {
 		name: 'Monk',
@@ -137,13 +117,8 @@ module.exports = {
 				int: 6,
 			},
 		},
-		startSkills: {
-			1: 'slash',
-			2: 'shield',
-			3: null,
-			4: null,
-			5: null,
-		},
+		startSkills: ['slash', 'shield'],
+		startEquipment: ['training_staff'],
 	},
 	crusader: {
 		name: 'Crusader',
@@ -166,13 +141,8 @@ module.exports = {
 				int: 6,
 			},
 		},
-		startSkills: {
-			1: 'slash',
-			2: 'shield',
-			3: null,
-			4: null,
-			5: null,
-		},
+		startSkills: ['slash', 'shield'],
+		startEquipment: ['training_staff'],
 	},
 	wizard: {
 		name: 'Wizard',
@@ -195,13 +165,8 @@ module.exports = {
 				int: 7,
 			},
 		},
-		startSkills: {
-			1: 'slash',
-			2: 'shield',
-			3: null,
-			4: null,
-			5: null,
-		},
+		startSkills: ['slash', 'shield'],
+		startEquipment: ['training_staff'],
 	},
 	warlock: {
 		name: 'Warlock',
@@ -224,13 +189,8 @@ module.exports = {
 				int: 7,
 			},
 		},
-		startSkills: {
-			1: 'slash',
-			2: 'shield',
-			3: null,
-			4: null,
-			5: null,
-		},
+		startSkills: ['slash', 'shield'],
+		startEquipment: ['training_staff'],
 	},
 
 };

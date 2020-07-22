@@ -12,19 +12,19 @@ module.exports = {
 	async execute(message, args, msgUser, character, guildProfile, client, logger, cooldowns) {
 
 		let consumable = '__**Consumables:**__\n';
-		let collectables = '__**Collectables:**__\n';
-		let chests = '__**Chests:**__\n';
+		let equipment = '__**equipment:**__\n';
+		// let chests = '__**Chests:**__\n';
 
 		let i;
 		for (i in items) {
 			if (items[i].cost) {
-				if (items[i].type == 'consumable') { consumable += `${items[i].emoji} ${items[i].name}: **${items[i].cost}💰**\n`; }
-				else if (items[i].type == 'collectables') { collectables += `${items[i].emoji} ${items[i].name}: **${items[i].cost}💰**\n`; }
-				else if (items[i].type == 'chests') { chests += `${items[i].emoji} ${items[i].name}: **${items[i].cost}💰**\n`; }
+				if (items[i].type.includes('consumable')) { consumable += `${items[i].emoji} ${items[i].name}: **${items[i].cost}💰**\n`; }
+				else if (items[i].type.includes('equipment')) { equipment += `${items[i].emoji} ${items[i].name}: **${items[i].cost}💰**\n`; }
+				// else if (items[i].type == 'chests') { chests += `${items[i].emoji} ${items[i].name}: **${items[i].cost}💰**\n`; }
 			}
 		}
 
-		const description = `${consumable}`;
+		const description = `${consumable}\n${equipment}`;
 
 		const embed = new Discord.MessageEmbed()
 			.setTitle('DMMO Shop')

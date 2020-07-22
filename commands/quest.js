@@ -11,9 +11,9 @@ module.exports = {
 
 	async execute(message, args, msgUser, character, guildProfile, client, logger, cooldowns) {
 
-		if (!msgUser.stats) return message.reply('you need to have a class to quest.\nUse the command `class` to choose a class');
+		if (!msgUser.baseStats) return message.reply('you need to have a class to quest.\nUse the command `class` to choose a class');
 		if (msgUser.curHP < 1) return message.reply('you dont have enough hp to quest.\nDrink a healing potion or rest at an inn to regain **HP**.');
-		const stats = JSON.parse(msgUser.stats);
+		const stats = JSON.parse(msgUser.baseStats);
 		const userskills = JSON.parse(msgUser.skills);
 		const userClass = await character.getClass(message.author.id);
 

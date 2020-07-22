@@ -1,5 +1,4 @@
 const Discord = require('discord.js');
-const items = require('../data/items');
 module.exports = {
 	name: 'use',
 	summary: 'Use an item from your inventory',
@@ -97,7 +96,7 @@ async function use(character, sentMessage, amount, embed, item, msgUser) {
 		amount = 1;
 	}
 
-	switch (item.type) {
+	switch (item.type[0]) {
 
 		case 'consumable':
 			if (item.use) {
