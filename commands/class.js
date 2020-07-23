@@ -214,7 +214,12 @@ module.exports = {
 								break;
 
 							case '✅':
-								character.setClass(message.author.id, curClass);
+								try {
+									character.setClass(message.author.id, curClass);
+								}
+								catch (error) {
+									return sentMessage.edit(embed.setColor(curClass.colour).setDescription('Something went wrong'));
+								}
 								sentMessage.edit(embed.setColor(curClass.colour).setDescription(`You have chosen the class ${curClass.name}`));
 								sentMessage.reactions.removeAll();
 								break;

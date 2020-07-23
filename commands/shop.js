@@ -19,8 +19,10 @@ module.exports = {
 		for (i in items) {
 			if (items[i].cost) {
 				if (items[i].type.includes('consumable')) { consumable += `${items[i].emoji} ${items[i].name}: **${items[i].cost}💰**\n`; }
-				else if (items[i].type.includes('equipment')) { equipment += `${items[i].emoji} ${items[i].name}: **${items[i].cost}💰**\n`; }
-				// else if (items[i].type == 'chests') { chests += `${items[i].emoji} ${items[i].name}: **${items[i].cost}💰**\n`; }
+			if (items[i].buyable) {
+				if (items[i].type.includes('consumable')) { consumable += `${items[i].emoji} ${items[i].name}:		**${items[i].value}💰**\n`; }
+				else if (items[i].type.includes('equipment')) { equipment += `${items[i].emoji} ${items[i].name}:		**${items[i].value}💰**\n`; }
+				// else if (items[i].type == 'chests') { chests += `${items[i].emoji} ${items[i].name}: **${items[i].value}💰**\n`; }
 			}
 		}
 

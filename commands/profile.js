@@ -46,13 +46,21 @@ module.exports = {
 		if (weekly === true) weekly = 'now';
 		if (vote === true) vote = 'now';
 
-		const charEmbed = new Discord.MessageEmbed()
+		const characterEmbed = new Discord.MessageEmbed()
 
 			.setTitle(`**${target.tag}'s Character Stats**`)
 			.setThumbnail(avatar)
 			.setColor(colour)
 			.addField('Class:', `${className} ${levelInfo.level}`, true)
 			.addField('EXP:', exp, true)
+			.setTimestamp()
+			.setFooter('DMMO', client.user.displayAvatarURL());
+
+		const equipmentEmbed = new Discord.MessageEmbed()
+
+			.setTitle(`**${target.tag}'s Equipment**`)
+			.setThumbnail(avatar)
+			.setColor(colour)
 			.setTimestamp()
 			.setFooter('DMMO', client.user.displayAvatarURL());
 
@@ -69,7 +77,7 @@ module.exports = {
 			.setTimestamp()
 			.setFooter('DMMO', client.user.displayAvatarURL());
 
-		const invEmbed = new Discord.MessageEmbed()
+		const inventoryEmbed = new Discord.MessageEmbed()
 
 			.setTitle(`${target.tag}'s Inventory`)
 			.setThumbnail(avatar)
@@ -85,41 +93,49 @@ module.exports = {
 				const item = itemInfo[i.name];
 				inventory += `${item.emoji}__${i.name}__: **x${i.amount}**\n`;
 			});
-			invEmbed.setDescription(inventory);
+			inventoryEmbed.setDescription(inventory);
 		}
-		else { invEmbed.addField('Inventory:', `*${target.tag}* has nothing!`); }
+		else { inventoryEmbed.addField('Inventory:', `*${target.tag}* has nothing!`); }
 
-		
+
 		if (userClass) {
-			const stats = await character.getBaseStats(target.id);
-			charEmbed.addFields(
+			const stats = await character.getStats(target.id);
+			characterEmbed.addFields(
 				{ name: '\u200B', value: '\u200B' },
 				{ name: 'Health', value: `${msgUser.curHP}/${stats.hp}<:health:730849477765890130>`, inline: true },
 				{ name: 'Mana', value: `${msgUser.curMP}/${stats.mp}<:mana:730849477640061029>`, inline: true },
-
-				{ name: 'Strength', value: stats.str, inline: true },
-				{ name: 'Dexterity', value: stats.dex, inline: true },
-				{ name: 'Constitution', value: stats.con, inline: true },
-				{ name: 'Intelligence', value: stats.int, inline: true },
 			);
+
+			let statDescription = '';
+			for (const stat in stats) statDescription += `\n__${stat}__: **${stats[stat]}**`;
+			characterEmbed.setDescription(statDescription);
+
+			const equipment = await character.getEquipment(target.id);
+			let equipmentDescription = '';
+			for (const slot in equipment) equipmentDescription += `\n__${slot}__: **${equipment[slot]}**`;
+			equipmentEmbed.setDescription(equipmentDescription);
 		}
-		else charEmbed.setDescription(`${target} does not have a class yet.\n\nTo choose a class use the command \`class\`.`);
+		else {
+			characterEmbed.setDescription(`${target} does not have a class yet.\n\nTo choose a class use the command \`class\`.`);
+			equipmentEmbed.setDescription(`${target} does not have a class yet.\n\nTo choose a class use the command \`class\`.`);
+	}
 
+	message.channel.send(characterEmbed)
+		.then(sentMessage => {
+			sentMessage.react('730807684865065005');
+			sentMessage.react('🛡️');
+			sentMessage.react('💰');
+			sentMessage.react('📦'); 
+			const collector = sentMessage.createReactionCollector(filter, { time: 60000 });
 
-		message.channel.send(charEmbed)
-			.then(sentMessage => {
-				sentMessage.react('730807684865065005');
-				sentMessage.react('💰');
-				sentMessage.react('📦');
-				const collector = sentMessage.createReactionCollector(filter, { time: 60000 });
-
-				collector.on('collect', (reaction) => {
-					reaction.users.remove(message.author.id);
-					if (reaction.emoji.name == 'character') { sentMessage.edit(charEmbed); }
-					else if (reaction.emoji.name == '💰') { sentMessage.edit(moneyEmbed); }
-					else if (reaction.emoji.name == '📦') { sentMessage.edit(invEmbed); }
-				});
-				collector.on('end', () => sentMessage.reactions.removeAll());
+			collector.on('collect', (reaction) => {
+				reaction.users.remove(message.author.id);
+				if (reaction.emoji.name == 'character') { sentMessage.edit(characterEmbed); }
+				else if (reaction.emoji.name == '🛡️') { sentMessage.edit(equipmentEmbed); }
+				else if (reaction.emoji.name == '💰') { sentMessage.edit(moneyEmbed); }
+				else if (reaction.emoji.name == '📦') { sentMessage.edit(inventoryEmbed); }
 			});
-	},
+			collector.on('end', () => sentMessage.reactions.removeAll());
+		});
+},
 };

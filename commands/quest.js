@@ -1,5 +1,4 @@
 const Discord = require('discord.js');
-const { exitOnError } = require('winston');
 module.exports = {
 	name: 'quest',
 	summary: 'Go on a quest to kill mobs',
@@ -11,9 +10,9 @@ module.exports = {
 
 	async execute(message, args, msgUser, character, guildProfile, client, logger, cooldowns) {
 
-		if (!msgUser.baseStats) return message.reply('you need to have a class to quest.\nUse the command `class` to choose a class');
+		if (!msgUser.class) return message.reply('you need to have a class to quest.\nUse the command `class` to choose a class');
 		if (msgUser.curHP < 1) return message.reply('you dont have enough hp to quest.\nDrink a healing potion or rest at an inn to regain **HP**.');
-		const stats = JSON.parse(msgUser.baseStats);
+		const stats = JSON.parse(msgUser.stats);
 		const userskills = JSON.parse(msgUser.skills);
 		const userClass = await character.getClass(message.author.id);
 
@@ -42,7 +41,7 @@ module.exports = {
 		const monster = {
 			name: 'test monster',
 			damage: [5, 5],
-			hp: 200,
+			hp: 40 * msgUser.level,
 			picture: 'monster_1.png',
 		};
 		let description = '';
@@ -68,7 +67,7 @@ module.exports = {
 			.then(sentMessage => {
 				setEmbed();
 				sentMessage.react('👏');
-				for (let i = 0; i < userSkillEmojis.length; i++) if (userSkillEmojis[i]) sentMessage.react(userSkillEmojis[i]);
+				for (i = 0; i < userSkillEmojis.length; i++) if (userSkillEmojis[i]) sentMessage.react(userSkillEmojis[i]);
 
 				const collector = sentMessage.createReactionCollector(filter);
 
@@ -84,7 +83,7 @@ module.exports = {
 					if (reaction.emoji.name == '👏') {
 
 						playerDmg += (stats.str / 5) + 5;
-						totalDamage = Math.floor(playerDmg * playerDmgMod);
+						totalDamage = Math.round(playerDmg * playerDmgMod);
 						monster.hp -= totalDamage;
 						description += `_**You**_ use __*Clap*__ and deal __**${totalDamage}**__ damage to __${monster.name}__.\n`;
 					}
@@ -92,7 +91,7 @@ module.exports = {
 						const skill = userSkillList[userSkillEmojis.indexOf(reaction.emoji.name)];
 
 						// Remove Mana
-						const manaCost = Math.floor(stats.mp * skill.manaCost);
+						const manaCost = Math.round(stats.mp * skill.manaCost);
 						if (msgUser.curMP < manaCost) {
 							return message.reply(`${skill.name} costs ${manaCost}<:mana:730849477640061029> to use but you only have ${msgUser.curMP}<:mana:730849477640061029>`).then(manaMessage => {
 								manaMessage.delete({ timeout: 5000 });
@@ -127,7 +126,7 @@ module.exports = {
 							console.log(playerDmg);
 							console.log(playerDmgMod);
 							console.log(playerDmgDebuff);
-							totalDamage = Math.floor(playerDmg * playerDmgMod * playerDmgDebuff * (1 + (Math.random() * 0.1)));
+							totalDamage = Math.round(playerDmg * playerDmgMod * playerDmgDebuff * (1 + (Math.random() * 0.1)));
 							monster.hp -= totalDamage;
 							description += `_**You**_ use __*${skill.name}*__ and deal __**${totalDamage}**__ damage to __${monster.name}__.\n`;
 						}
@@ -151,7 +150,7 @@ module.exports = {
 				function monsterTurn() {
 
 					monsterDmg = (monster.damage[0] + (monster.damage[1] * Math.random())) + msgUser.level;
-					totalDamage = Math.floor(monsterDmg * monsterDmgMod * monsterDmgDebuff * (1 + (Math.random() * 0.1)));
+					totalDamage = Math.round(monsterDmg * monsterDmgMod * monsterDmgDebuff * (1 + (Math.random() * 0.1)));
 					msgUser.curHP -= totalDamage;
 					description += `_**${monster.name}**_ uses __*Bite*__ and deals __**${totalDamage}**__ damage to __you__.\n\n`;
 
@@ -170,7 +169,7 @@ module.exports = {
 
 				function endGame(exp) {
 					msgUser.curMP = stats.mp;
-					const reward = Math.floor((exp + (Math.random() * exp / 5)) * msgUser.level);
+					const reward = Math.round((exp + (Math.random() * exp / 5)) * msgUser.level);
 					character.addExp(message.author.id, reward, message);
 					description += `\n_**You**_ gained **${reward}** EXP.\n`;
 					collector.stop();

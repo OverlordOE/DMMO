@@ -71,6 +71,13 @@ Reflect.defineProperty(character, 'getItem', {
 	},
 });
 
+Reflect.defineProperty(character, 'getEquipment', {
+	value: async function getEquipment(id) {
+		let user = character.get(id);
+		if (!user) user = await character.newUser(id);
+		return JSON.parse(user.equipment);
+	},
+});
 Reflect.defineProperty(character, 'equip', {
 	value: async function equip(id, equipment) {
 		let user = character.get(id);
@@ -79,7 +86,7 @@ Reflect.defineProperty(character, 'equip', {
 			where: { user_id: id, name: equipment.name },
 		});
 		if (userEquipment) {
-			const equipped = JSON.parse(user.skills);
+			const equipped = JSON.parse(user.equipment);
 			// const userClass = JSON.parse(user.class);
 			// if (userClass.name == equipment.class || equipment.class == 'all') {
 
@@ -102,7 +109,7 @@ Reflect.defineProperty(character, 'equip', {
 			else equipped[equipment.slot] = equipment.name;
 
 			user.equipment = JSON.stringify(equipped);
-			character.calculateStats(id);
+			// character.calculateStats(id);
 			return user.save();
 			// }
 		}
@@ -196,6 +203,7 @@ Reflect.defineProperty(character, 'setClass', {
 		user.curMP = c.stats.base.mp;
 		user.class = JSON.stringify(c);
 		user.baseStats = JSON.stringify(c.stats.base);
+		user.equipment = JSON.stringify(c.startEquipment);
 
 		user.skills = JSON.stringify(c.startSkills);
 		for (let i = 0; i < c.startSkills.length; i++) {
@@ -205,11 +213,12 @@ Reflect.defineProperty(character, 'setClass', {
 		}
 
 		for (let i = 0; i < c.startEquipment.length; i++) {
-			const equipment = character.getItem(c.startEquipment[i]);
-			await character.addItem(id, equipment);
+			const equipment = await character.getItem(c.startEquipment[i]);
+			await character.addItem(id, equipment, 1);
 			await character.equip(id, equipment);
 		}
 
+		character.calculateStats(id);
 		return user.save();
 	},
 });
@@ -319,16 +328,32 @@ Reflect.defineProperty(character, 'getStats', {
 });
 Reflect.defineProperty(character, 'calculateStats', {
 	value: async function calculateStats(id) {
+		console.log('calculate stats');
 		let user = character.get(id);
 		if (!user) user = await character.newUser(id);
 		if (!user.class) throw Error('User does not have a class');
-		const baseStats = JSON.parse(user.baseStats);
 
-		const stats = {
+		const stats = JSON.parse(user.baseStats);
+		console.log('got basestats');
+		const equipment = await character.getEquipment(id);
+		for (const slot in equipment) {
+			if (equipment[slot]) {
+				const item = items[equipment[slot]];
 
+				if (item.add) {
+					for (const itemEffect in item.add) {
+						if (stats[itemEffect]) stats[itemEffect] += item.add[itemEffect];
+						else stats[itemEffect] = item.add[itemEffect];
+					}
+				}
+			}
+		}
+		console.log('added stats');
 
-		};
-
+		stats.hp += Math.round(stats.con / 4);
+		stats.mp += Math.round(stats.int / 4);
+		user.curHP += Math.round(stats.con / 4);
+		user.curMP += Math.round(stats.int / 4);
 
 		user.stats = JSON.stringify(stats);
 		user.save();
@@ -463,7 +488,6 @@ Reflect.defineProperty(character, 'newUser', {
 			lastHourly: now.subtract(1, 'days'),
 			lastWeekly: now.subtract(8, 'days'),
 			lastVote: now.subtract(1, 'days'),
-			stats: {},
 		});
 		character.set(id, user);
 		return user;

@@ -124,7 +124,7 @@ module.exports = {
 		buyable: true,
 		emoji: '<:Lesserhealingpotion:727508079448686622>',
 		rarity: 'uncommon',
-		picture: 'lmp.png',
+		picture: 'lhp.png',
 		type: ['consumable', 'potion'],
 		description: 'Restores 20 HP',
 		use: function(user) {
@@ -150,7 +150,7 @@ module.exports = {
 		buyable: true,
 		emoji: '<:Healingpotion:727508079498756246>',
 		rarity: 'rare',
-		picture: 'mp.png',
+		picture: 'hp.png',
 		type: ['consumable', 'potion'],
 		description: 'Restores 50 HP',
 		use: function(user) {
@@ -176,7 +176,7 @@ module.exports = {
 		buyable: true,
 		emoji: '<:GreaterHealingpotion:727508079494692914>',
 		rarity: 'epic',
-		picture: 'gmp.png',
+		picture: 'ghp.png',
 		type: ['consumable', 'potion'],
 		description: 'Restores 150 HP',
 		use: function(user) {

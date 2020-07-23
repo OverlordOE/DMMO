@@ -38,14 +38,18 @@ module.exports = {
 			item = await character.getItem(temp);
 
 			if (item) {
-				buy(character, sentMessage, amount, embed, item, message);
+				if (item.buyable) buy(character, sentMessage, amount, embed, item, message);
+				else return sentMessage.edit(embed.setDescription(`${item.name} is not available for purchase.`));
 			}
 			else {
 				message.channel.awaitMessages(filter, { max: 1, time: 60000 })
 
 					.then(async collected => {
 						item = await character.getItem(collected.first().content);
+
 						if (!item) return sentMessage.edit(embed.setDescription(`${collected.first().content} is not a valid item.`));
+						if (!item.buyable) return sentMessage.edit(embed.setDescription(`${item.name} is not available for purchase.`));
+
 						collected.first().delete().catch(e => logger.error(e.stack));
 
 						sentMessage.edit(embed.setDescription(`How many __${item.name}(s)__ do you want to buy?`)).then(() => {
@@ -70,7 +74,6 @@ module.exports = {
 				logger.error(e.stack);
 				message.reply('you didn\'t answer in time or something went wrong.');
 			});
-
 	},
 };
 
@@ -84,7 +87,7 @@ async function buy(character, sentMessage, amount, embed, item, message) {
 	}
 
 	let balance = await character.getBalance(message.author.id);
-	const cost = amount * item.cost;
+	const cost = amount * item.value;
 	if (cost > balance) {
 		return sentMessage.edit(embed.setDescription(`You currently have **${balance}💰**, but __**${amount}**__ __${item.name}(s)__ costs **${cost}💰**!`));
 	}

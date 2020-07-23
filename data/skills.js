@@ -6,7 +6,7 @@ module.exports = {
 		description: '',
 		class: 'all',
 		type: ['attack'],
-		manaCost: 0.4,
+		manaCost: 0.1,
 		damageType: 'physical',
 		mult: {
 			damage: 0.2,

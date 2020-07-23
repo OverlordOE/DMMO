@@ -40,8 +40,16 @@ module.exports = (sequelize, DataTypes) => {
 		},
 		
 		// stats
-		baseStats: DataTypes.JSON,
-		stats: DataTypes.JSON,
+		baseStats: {
+			type: DataTypes.JSON,
+			defaultValue: null,
+			allowNull: true,
+		},
+		stats: {
+			type: DataTypes.JSON,
+			defaultValue: null,
+			allowNull: true,
+		},
 		curHP: {
 			type: DataTypes.INTEGER,
 			allowNull: true,
