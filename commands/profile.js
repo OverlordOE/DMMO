@@ -100,42 +100,50 @@ module.exports = {
 
 		if (userClass) {
 			const stats = await character.getStats(target.id);
+			const baseStats = await character.getBaseStats(target.id);
 			characterEmbed.addFields(
-				{ name: '\u200B', value: '\u200B' },
 				{ name: 'Health', value: `${msgUser.curHP}/${stats.hp}<:health:730849477765890130>`, inline: true },
 				{ name: 'Mana', value: `${msgUser.curMP}/${stats.mp}<:mana:730849477640061029>`, inline: true },
 			);
 
 			let statDescription = '';
-			for (const stat in stats) statDescription += `\n__${stat}__: **${stats[stat]}**`;
+			for (const stat in stats) {
+				if (baseStats[stat]) statDescription += `\n**${character.stringToName(stat)}**: ${stats[stat]} (${stats[stat] - baseStats[stat]})`;
+				else statDescription += `\n**${character.stringToName(stat)}**: ${stats[stat]}`;
+			}
 			characterEmbed.setDescription(statDescription);
 
 			const equipment = await character.getEquipment(target.id);
 			let equipmentDescription = '';
-			for (const slot in equipment) equipmentDescription += `\n__${slot}__: **${equipment[slot]}**`;
+			for (const slot in equipment) {
+				if (equipment[slot]) {
+					const item = character.getItem(equipment[slot]);
+					equipmentDescription += `\n**${character.stringToName(slot)}**: ${item.emoji}${character.stringToName(item.name)}`;
+				} else { equipmentDescription += `\n**${character.stringToName(slot)}**: Nothing`; }
+			}
 			equipmentEmbed.setDescription(equipmentDescription);
 		}
 		else {
 			characterEmbed.setDescription(`${target} does not have a class yet.\n\nTo choose a class use the command \`class\`.`);
 			equipmentEmbed.setDescription(`${target} does not have a class yet.\n\nTo choose a class use the command \`class\`.`);
-	}
+		}
 
-	message.channel.send(characterEmbed)
-		.then(sentMessage => {
-			sentMessage.react('730807684865065005');
-			sentMessage.react('🛡️');
-			sentMessage.react('💰');
-			sentMessage.react('📦'); 
-			const collector = sentMessage.createReactionCollector(filter, { time: 60000 });
+		message.channel.send(characterEmbed)
+			.then(sentMessage => {
+				sentMessage.react('730807684865065005');
+				sentMessage.react('🛡️');
+				sentMessage.react('💰');
+				sentMessage.react('📦');
+				const collector = sentMessage.createReactionCollector(filter, { time: 60000 });
 
-			collector.on('collect', (reaction) => {
-				reaction.users.remove(message.author.id);
-				if (reaction.emoji.name == 'character') { sentMessage.edit(characterEmbed); }
-				else if (reaction.emoji.name == '🛡️') { sentMessage.edit(equipmentEmbed); }
-				else if (reaction.emoji.name == '💰') { sentMessage.edit(moneyEmbed); }
-				else if (reaction.emoji.name == '📦') { sentMessage.edit(inventoryEmbed); }
+				collector.on('collect', (reaction) => {
+					reaction.users.remove(message.author.id);
+					if (reaction.emoji.name == 'character') { sentMessage.edit(characterEmbed); }
+					else if (reaction.emoji.name == '🛡️') { sentMessage.edit(equipmentEmbed); }
+					else if (reaction.emoji.name == '💰') { sentMessage.edit(moneyEmbed); }
+					else if (reaction.emoji.name == '📦') { sentMessage.edit(inventoryEmbed); }
+				});
+				collector.on('end', () => sentMessage.reactions.removeAll());
 			});
-			collector.on('end', () => sentMessage.reactions.removeAll());
-		});
-},
+	},
 };

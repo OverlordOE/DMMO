@@ -3,7 +3,7 @@ module.exports = {
 	name: 'weekly',
 	summary: 'Get a weekly gift',
 	description: 'Get a weekly gift.',
-	category: 'money',
+	category: 'misc',
 	aliases: ['week', 'w'],
 	args: false,
 	cooldown: 5,

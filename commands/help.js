@@ -10,7 +10,7 @@ module.exports = {
 	async execute(message, args, msgUser, character, guildProfile, client, logger, cooldowns) {
 		const { commands } = message.client;
 		let adminCommands = '';
-		let musicCommands = '';
+		let combatCommands = '';
 		let miscCommands = '';
 		let infoCommands = '';
 
@@ -25,8 +25,8 @@ module.exports = {
 					case 'admin':
 						adminCommands += `**${command.name}** - ${command.summary}\n`;
 						break;
-					case 'music':
-						musicCommands += `**${command.name}** - ${command.summary}\n`;
+					case 'combat':
+						combatCommands += `**${command.name}** - ${command.summary}\n`;
 						break;
 					case 'misc':
 						miscCommands += `**${command.name}** - ${command.summary}\n`;
@@ -41,8 +41,8 @@ module.exports = {
 
 
 			help.setDescription(`__**Info Commands**__\n${infoCommands}\n
+								__**Combat Commands**__\n${combatCommands}\n
 								__**Miscellaneous Commands**__\n${miscCommands}\n
-								__**Music Commands**__\n${musicCommands}\n
 								__**Admin Commands**__\n${adminCommands}\n
 								`)
 				.addField('__**Help**__', '**You can send `help [command name]` to get info on a specific command!**')

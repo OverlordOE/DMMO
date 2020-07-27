@@ -2,8 +2,8 @@ const Discord = require('discord.js');
 const skillInfo = require('../data/skills');
 module.exports = {
 	name: 'myskills',
-	summary: 'Shows character of you or the tagger user',
-	description: 'Shows character of you or the tagger user.',
+	summary: 'Equip and look at your available skills',
+	description: 'Equip and look at your available skills.',
 	category: 'info',
 	aliases: ['ms', 'myskill', 'setskill'],
 	args: false,
@@ -39,32 +39,32 @@ module.exports = {
 
 		const embed = new Discord.MessageEmbed()
 
-			.setTitle(`${message.author.tag}'s Inventory`)
+			.setTitle(`${message.author.tag}'s Skills`)
 			.setThumbnail(avatar)
 			.setColor(colour)
 			.setTimestamp()
 			.setFooter('DMMO', client.user.displayAvatarURL());
 
 
-		let equippedSkills = '__**Equipped Skills:**__\nName/Class/Type/Mana Cost\n\n';
+		let equippedSkills = '__**Equipped Skills:**__\nSlot/Name/Class/Type/Mana Cost\n\n';
 		const equipped = JSON.parse(msgUser.skills);
 
 		if (equipped) {
 			for (let i = 1; i < 6; i++) {
 				if (equipped[i]) {
 					const skill = skillInfo[equipped[i]];
-					equippedSkills += `Slot ${i}: ${skill.emoji} __${equipped[i]}__ / ${skill.class} / ${skill.type} / ${skill.manaCost * 100}%\n`;
+					equippedSkills += `**Slot ${i}**: ${skill.emoji} ${character.stringToName(equipped[i])} / ${skill.class} / ${skill.type} / ${skill.manaCost * 100}%\n`;
 				}
-				else equippedSkills += `Slot ${i}: Nothing\n`;
+				else equippedSkills += `**Slot ${i}**: Nothing\n`;
 			}
 		}
-		else equippedSkills += 'Slot 1: Nothing\nSlot 2: Nothing\nSlot 3: Nothing\nSlot 4: Nothing\nSlot 5: Nothing\n';
+		else equippedSkills += '**Slot 1**: Nothing\n**Slot 2**: Nothing\n**Slot 3**: Nothing\n**Slot 4**: Nothing\n**Slot 5**: Nothing\n';
 
 		let availableSkills = '__**Available Skills:**__\nName/Class/Type/Mana Cost\n\n';
 		if (skills.length) {
 			skills.map(s => {
 				const skill = skillInfo[s.name];
-				availableSkills += `${skill.emoji} __${s.name}__ / ${skill.class} / ${skill.type} / ${skill.manaCost * 100}%\n`;
+				availableSkills += `${skill.emoji} ${character.stringToName(s.name)} / ${skill.class} / ${skill.type} / ${skill.manaCost * 100}%\n`;
 			});
 		}
 

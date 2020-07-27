@@ -7,7 +7,7 @@ module.exports = {
 	args: false,
 	usage: '',
 	cooldown: 5,
-	category: 'money',
+	category: 'misc',
 
 	async execute(message, args, msgUser, character, guildProfile, client, logger, cooldowns) {
 

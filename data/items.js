@@ -212,7 +212,7 @@ module.exports = {
 		add: {
 			str: 2,
 		},
-		description: 'Your basic training staff.',
+		description: 'Your basic training sword.',
 	},
 
 	training_staff: {
@@ -228,7 +228,7 @@ module.exports = {
 		add: {
 			int: 2,
 		},
-		description: 'Your basic training sword.',
+		description: 'Your basic training staff.',
 	},
 
 

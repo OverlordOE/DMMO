@@ -3,7 +3,7 @@ module.exports = {
 	name: 'buy',
 	summary: 'Buy an item from the shop',
 	description: 'With this you can buy an item from the shop.\nYou can either use `buy <item> <amount> to instantly buy the items or just use `buy`.\nIf you use the latter you will get prompted to enter the name and amount of the item that you want into the chat.',
-	category: 'money',
+	category: 'misc',
 	aliases: ['get'],
 	usage: '<item> <amount>',
 	cooldown: 5,

@@ -3,7 +3,7 @@ module.exports = {
 	name: 'use',
 	summary: 'Use an item from your inventory',
 	description: 'Use an item from your inventory.',
-	category: 'money',
+	category: 'misc',
 	aliases: ['item'],
 	args: false,
 	usage: '',

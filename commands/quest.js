@@ -4,7 +4,7 @@ module.exports = {
 	summary: 'Go on a quest to kill mobs',
 	description: 'Go on a quest to kill mobs.',
 	aliases: ['q'],
-	category: 'money',
+	category: 'combat',
 	args: false,
 	usage: '',
 

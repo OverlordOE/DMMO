@@ -7,7 +7,7 @@ module.exports = {
 	summary: 'Sell items to get 80% of your money back',
 	description: 'Sell items to get 80% of your money back.',
 	aliases: ['refund'],
-	category: 'money',
+	category: 'misc',
 	args: false,
 	usage: '',
 
