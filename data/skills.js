@@ -9,7 +9,7 @@ module.exports = {
 		manaCost: 0.1,
 		damageType: 'physical',
 		mult: {
-			damage: 0.2,
+			Damage: 0.2,
 		},
 	},
 
@@ -22,7 +22,7 @@ module.exports = {
 		manaCost: 0.08,
 		damageType: 'physical',
 		debuff: {
-			damage: -0.5,
+			Damage: -0.5,
 		},
 	},
 };

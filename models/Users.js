@@ -4,13 +4,25 @@ module.exports = (sequelize, DataTypes) => {
 			type: DataTypes.STRING,
 			primaryKey: true,
 		},
+
+		// MONEY
 		balance: {
 			type: DataTypes.INTEGER,
 			defaultValue: 0,
 			allowNull: false,
 		},
+		totalEarned: {
+			type: DataTypes.INTEGER,
+			defaultValue: 0,
+			allowNull: false,
+		},
+		networth: {
+			type: DataTypes.INTEGER,
+			defaultValue: 0,
+			allowNull: false,
+		},
 
-		// character info
+		// CHARACTER
 		level: {
 			type: DataTypes.INTEGER,
 			defaultValue: 1,
@@ -22,24 +34,15 @@ module.exports = (sequelize, DataTypes) => {
 			allowNull: false,
 		},
 		class: {
-			type: DataTypes.JSON, 
+			type: DataTypes.STRING,
 			defaultValue: null,
 			allowNull: true,
 		},
-
-		// equipment and skills
 		equipment: {
 			type: DataTypes.JSON,
 			defaultValue: null,
 			allowNull: true,
 		},
-		skills: {
-			type: DataTypes.JSON,
-			defaultValue: null,
-			allowNull: true,
-		},
-		
-		// stats
 		baseStats: {
 			type: DataTypes.JSON,
 			defaultValue: null,
@@ -50,37 +53,31 @@ module.exports = (sequelize, DataTypes) => {
 			defaultValue: null,
 			allowNull: true,
 		},
-		curHP: {
-			type: DataTypes.INTEGER,
-			allowNull: true,
-		},
-		curMP: {
-			type: DataTypes.INTEGER,
-			allowNull: true,
-		},
 
-		// cooldowns
+
+		// COOLDOWNS
 		lastDaily: {
-			type: DataTypes.INTEGER,
-			defaultValue: 0,
+			type: DataTypes.STRING,
+			defaultValue: '',
 			allowNull: false,
 		},
 		lastHourly: {
-			type: DataTypes.INTEGER,
-			defaultValue: 0,
+			type: DataTypes.STRING,
+			defaultValue: '',
 			allowNull: false,
 		},
-		lastWeekly: {
-			type: DataTypes.INTEGER,
-			defaultValue: 0,
-			allowNull: false,
-		},
-		hasVoted: {
-			type: DataTypes.BOOLEAN,
-			defaultValue: false,
+		lastVote: {
+			type: DataTypes.STRING,
+			defaultValue: '',
 			allowNull: false,
 		},
 
+
+		// MISC
+		firstCommand: {
+			type: DataTypes.BOOLEAN,
+			defaultValue: true,
+		},
 	},
 		{
 			timestamps: false,

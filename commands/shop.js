@@ -9,29 +9,29 @@ module.exports = {
 	args: false,
 	usage: '',
 
-	async execute(message, args, msgUser, character, guildProfile, client, logger, cooldowns) {
+	execute(message, args, msgUser, client, logger) {
 
-		let consumable = '__**Consumables:**__\n';
-		let equipment = '__**equipment:**__\n';
-		// let chests = '__**Chests:**__\n';
+		let collectables = '__**Collectables:**__\n';
+		let chests = '__**Chests:**__\n';
+		let equipment = '__**Equipment:**__\n';
 
-		let i;
-		for (i in items) {
-			if (items[i].buyable) {
-				if (items[i].type.includes('consumable')) { consumable += `${items[i].emoji} ${items[i].name}:		**${items[i].value}💰**\n`; }
-				else if (items[i].type.includes('equipment')) { equipment += `${items[i].emoji} ${items[i].name}:		**${items[i].value}💰**\n`; }
-				// else if (items[i].type == 'chests') { chests += `${items[i].emoji} ${items[i].name}: **${items[i].value}💰**\n`; }
+		Object.values(items).sort((a, b) => a.value - b.value).map((i) => {
+			if (i.buyable) {
+				if (i.ctg == 'collectable') collectables += `${i.emoji} ${i.name}: ${client.util.formatNumber(i.value)}💰\n`;
+				else if (i.ctg == 'chest') chests += `${i.emoji} ${i.name}: ${client.util.formatNumber(i.value)}💰\n`;
+				else if (i.ctg == 'equipment') equipment += `${i.emoji}${i.name}: ${client.util.formatNumber(i.value)}💰\n`;
 			}
-		}
+		});
 
-		const description = `${consumable}\n${equipment}`;
+		const description = `${chests}\n${equipment}\n${collectables}`;
 
 		const embed = new Discord.MessageEmbed()
-			.setTitle('DMMO Shop')
+			.setTitle('Neia Shop')
 			.setThumbnail(client.user.displayAvatarURL())
 			.setDescription(description)
-			.setTimestamp()
-			.setFooter('DMMO', client.user.displayAvatarURL());
+			.setColor(client.characterCommands.getColour(msgUser))
+
+			.setFooter('Use the items command to see the full item list.', client.user.displayAvatarURL());
 
 		return message.channel.send(embed);
 	},

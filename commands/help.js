@@ -7,29 +7,37 @@ module.exports = {
 	usage: '<command name>',
 	args: false,
 
-	async execute(message, args, msgUser, character, guildProfile, client, logger, cooldowns) {
+	execute(message, args, msgUser, client, logger) {
 		const { commands } = message.client;
 		let adminCommands = '';
-		let combatCommands = '';
+		let musicCommands = '';
 		let miscCommands = '';
+		let pvpCommands = '';
+		let economyCommands = '';
 		let infoCommands = '';
 
 		const help = new Discord.MessageEmbed()
-
-			.setTimestamp();
+			.setColor(client.characterCommands.getColour(msgUser))
+			;
 
 		if (!args.length) {
-			help.setTitle('DMMO command list');
+			help.setTitle('Neia command list');
 			commands.map(command => {
 				switch (command.category) {
 					case 'admin':
 						adminCommands += `**${command.name}** - ${command.summary}\n`;
 						break;
-					case 'combat':
-						combatCommands += `**${command.name}** - ${command.summary}\n`;
+					case 'music':
+						musicCommands += `**${command.name}** - ${command.summary}\n`;
 						break;
 					case 'misc':
 						miscCommands += `**${command.name}** - ${command.summary}\n`;
+						break;
+					case 'pvp':
+						pvpCommands += `**${command.name}** - ${command.summary}\n`;
+						break;
+					case 'economy':
+						economyCommands += `**${command.name}** - ${command.summary}\n`;
 						break;
 					case 'info':
 						infoCommands += `**${command.name}** - ${command.summary}\n`;
@@ -41,14 +49,16 @@ module.exports = {
 
 
 			help.setDescription(`__**Info Commands**__\n${infoCommands}\n
-								__**Combat Commands**__\n${combatCommands}\n
+								__**PvP Commands**__\n${pvpCommands}\n
+								__**Economy Commands**__\n${economyCommands}\n
 								__**Miscellaneous Commands**__\n${miscCommands}\n
+								__**Music Commands**__\n${musicCommands}\n
 								__**Admin Commands**__\n${adminCommands}\n
 								`)
 				.addField('__**Help**__', '**You can send `help [command name]` to get info on a specific command!**')
-				.addField('Helpfull Links', `[Click here to invite me to your server](https://discord.com/oauth2/authorize?client_id=684458276129079320&scope=client&permissions=372517968)\n
+				.addField('Helpfull Links', `[Click here to invite me to your server](https://discord.com/oauth2/authorize?client_id=684458276129079320&scope=bot&permissions=1178070081)\n
 							 [Click here to join the support server](https://discord.gg/hFGxVDT)\n
-							 [Click here to submit a bug or request  feature](https://github.com/OverlordOE/DMMO/issues/new/choose)\n
+							 [Click here to submit a bug or request  feature](https://github.com/OverlordOE/Neia/issues/new/choose)\n
 							 For more info contact: OverlordOE#0717
 			`);
 		}
@@ -67,13 +77,7 @@ module.exports = {
 			if (command.description) help.addField('**Description:**', command.description);
 			if (command.usage) help.addField('**Usage:**', `${command.name} ${command.usage}`);
 			if (command.aliases) help.addField('**Aliases:**', command.aliases.join(', '));
-			if (command.cooldown) {
-				if (command.cooldown > 60) help.addField('**Cooldown:**', `${command.cooldown / 60} minutes`);
-				else help.addField('**Cooldown:**', `${command.cooldown} seconds`);
-			}
-
 		}
-
 
 		message.channel.send(help);
 	},

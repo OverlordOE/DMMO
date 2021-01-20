@@ -8,20 +8,19 @@ module.exports = {
 	usage: '',
 	aliases: ['inv', 'bug', 'join', 'support', 'link'],
 
-	async execute(message, args, msgUser, character, guildProfile, client, logger, cooldowns) {
+	execute(message, args, msgUser, client, logger) {
 
 		const embed = new Discord.MessageEmbed()
-			.setTitle('DMMO Invites')
+			.setTitle('Neia Invites')
 			.setThumbnail(client.user.displayAvatarURL())
-			.setTimestamp()
-			.setFooter('DMMO', client.user.displayAvatarURL())
-			.setDescription(`[Click here to invite me to your server](https://discord.com/oauth2/authorize?client_id=684458276129079320&scope=client&permissions=372517968)\n
-							 [Click here to join the support server](https://discord.gg/hFGxVDT)\n
-							 [Click here to submit a bug or request  feature](https://github.com/OverlordOE/DMMO/issues/new/choose)\n
-							 For more info contact: OverlordOE#0717
+			.setDescription(`
+							[Click here to invite me to your server](https://discord.com/oauth2/authorize?client_id=684458276129079320&scope=bot&permissions=1178070081)\n
+							[Click here to join the support server](https://discord.gg/hFGxVDT)\n
+							[Click here to submit a bug or request  feature](https://github.com/OverlordOE/Neia/issues/new/choose)\n
+							For more info contact: OverlordOE#0717
 			`);
 		message.channel.send(embed);
 	},
 };
 // https://discord.gg/hFGxVDT
-// https://discord.com/oauth2/authorize?client_id=684458276129079320&scope=client&permissions=372517968
+//https://discord.com/oauth2/authorize?client_id=684458276129079320&scope=bot&permissions=1178070081

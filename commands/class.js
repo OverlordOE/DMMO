@@ -1,17 +1,17 @@
 const Discord = require('discord.js');
-const emojicharacters = require('../emojiCharacters');
+const emojicharacters = require('../data/emojiCharacters');
 const classes = require('../data/classes');
 module.exports = {
 	name: 'class',
 	summary: 'Choose your class',
-	description: 'Choose your class that you will use. Can only be choosen once.',
-	category: 'info',
+	description: 'Choose your class that you will use. You can reset your client.characterCommands by using this command again.',
+	category: 'pvp',
 	aliases: ['classes'],
 	args: false,
 	usage: '',
 
 
-	async execute(message, args, msgUser, character, guildProfile, client, logger, cooldowns) {
+	async execute(message, args, msgUser, client, logger) {
 
 
 		const embed = new Discord.MessageEmbed()
@@ -23,27 +23,13 @@ module.exports = {
 		if (!msgUser.class) {
 			let curClass = classes.warrior;
 			const filter = (reaction, user) => {
-				return [emojicharacters[1], emojicharacters[2], emojicharacters[3], emojicharacters[4], emojicharacters[5], emojicharacters[6], emojicharacters[7], emojicharacters[8], '✅'].includes(reaction.emoji.name) && user.id === message.author.id;
+				return [emojicharacters[1], emojicharacters[2], emojicharacters[3], '✅'].includes(reaction.emoji.name) && user.id === message.author.id;
 			};
 
-			message.channel.send(embed.setColor(curClass.colour)
-				.setColor(curClass.colour).setDescription(`
-			The Warrior uses its overwhelming strength to crush any enemies in its path
-			
-			Usable equipment types:
-
-			Starting equipment:
-
-			Base stats:
-			__Health__: **${curClass.stats.base.hp}**
-			__Mana__: **${curClass.stats.base.mp}**
-			__Strength__: **${curClass.stats.base.str}**
-			__Dexterity__: **${curClass.stats.base.dex}**
-			__Constitution__: **${curClass.stats.base.con}**
-			__Intelligence__: **${curClass.stats.base.int}**
-			\nOnce you have chosen your class press ✅ to confirm your class`))
+			message.channel.send(embed)
 				.then(sentMessage => {
-					for (let i = 1; i < 9; i++) sentMessage.react(emojicharacters[i]);
+					setClass(curClass, sentMessage, embed);
+					for (let i = 1; i < 4; i++) sentMessage.react(emojicharacters[i]);
 					sentMessage.react('✅');
 
 					const collector = sentMessage.createReactionCollector(filter, { time: 180000 });
@@ -54,177 +40,27 @@ module.exports = {
 						switch (reaction.emoji.name) {
 							case emojicharacters[1]:
 								curClass = classes.warrior;
-								sentMessage.edit(embed.setTitle('Warrior').setColor(curClass.colour).setDescription(`
-							Warrior skills are centered around strength and physical combat.
-							They have a wide variety of melee weapons, and the ability to survive while tanking for the group, usually at the cost of agility or range. 
-			
-							Usable equipment types:
-
-							Starting equipment:
-
-							Base stats:
-							__Health__: **${curClass.stats.base.hp}**
-							__Mana__: **${curClass.stats.base.mp}**
-							__Strength__: **${curClass.stats.base.str}**
-							__Dexterity__: **${curClass.stats.base.dex}**
-							__Constitution__: **${curClass.stats.base.con}**
-							__Intelligence__: **${curClass.stats.base.int}**
-							\nOnce you have chosen your class press ✅ to confirm your class`));
 								break;
 
 							case emojicharacters[2]:
-								curClass = classes.rogue;
-								sentMessage.edit(embed.setTitle('Rogue').setColor(curClass.colour).setDescription(`
-							A rogue is a versatile character, capable of sneaky combat and nimble tricks. The rogue is stealthy and dexterous.
-							This class is a fast melee class with a main focus on DPS.
-			
-							Usable equipment types:
-
-							Starting equipment:
-
-							Base stats:
-							__Health__: **${curClass.stats.base.hp}**
-							__Mana__: **${curClass.stats.base.mp}**
-							__Strength__: **${curClass.stats.base.str}**
-							__Dexterity__: **${curClass.stats.base.dex}**
-							__Constitution__: **${curClass.stats.base.con}**
-							__Intelligence__: **${curClass.stats.base.int}**
-							\nOnce you have chosen your class press ✅ to confirm your class`));
+								curClass = classes.ranger;
 								break;
 
 							case emojicharacters[3]:
-								curClass = classes.hunter;
-								sentMessage.edit(embed.setTitle('Hunter').setColor(curClass.colour).setDescription(`
-							Hunters battle their foes at a distance, trying to take their best shot to damage the enemy or weaken him with poisonous arrows.
-							The main focus of this class lays in DPS.
-			
-							Usable equipment types:
-
-							Starting equipment:
-
-							Base stats:
-							__Health__: **${curClass.stats.base.hp}**
-							__Mana__: **${curClass.stats.base.mp}**
-							__Strength__: **${curClass.stats.base.str}**
-							__Dexterity__: **${curClass.stats.base.dex}**
-							__Constitution__: **${curClass.stats.base.con}**
-							__Intelligence__: **${curClass.stats.base.int}**
-							\nOnce you have chosen your class press ✅ to confirm your class`));
-								break;
-
-							case emojicharacters[4]:
-								curClass = classes.gunner;
-								sentMessage.edit(embed.setTitle('Gunner').setColor(curClass.colour).setDescription(`
-							As the Gunner, you are firepower, packing high amounts of damage through your rifle. 
-							Rifles are kind of an experimental thing at the moment, so sorry for the reload time!
-			
-							Usable equipment types:
-
-							Starting equipment:
-
-							Base stats:
-							__Health__: **${curClass.stats.base.hp}**
-							__Mana__: **${curClass.stats.base.mp}**
-							__Strength__: **${curClass.stats.base.str}**
-							__Dexterity__: **${curClass.stats.base.dex}**
-							__Constitution__: **${curClass.stats.base.con}**
-							__Intelligence__: **${curClass.stats.base.int}**
-							\nOnce you have chosen your class press ✅ to confirm your class`));
-								break;
-
-							case emojicharacters[5]:
-								curClass = classes.monk;
-								sentMessage.edit(embed.setTitle('Monk').setColor(curClass.colour).setDescription(`
-							The monk skills mostly incorporate physical and magic damage but also healing abilities.
-							The monk is focused on mobility, being able to dash to enemies and move quickly around the battlefield.
-			
-							Usable equipment types:
-
-							Starting equipment:
-
-							Base stats:
-							__Health__: **${curClass.stats.base.hp}**
-							__Mana__: **${curClass.stats.base.mp}**
-							__Strength__: **${curClass.stats.base.str}**
-							__Dexterity__: **${curClass.stats.base.dex}**
-							__Constitution__: **${curClass.stats.base.con}**
-							__Intelligence__: **${curClass.stats.base.int}**
-							\nOnce you have chosen your class press ✅ to confirm your class`));
-								break;
-
-							case emojicharacters[6]:
-								curClass = classes.crusader;
-								sentMessage.edit(embed.setTitle('Crusader').setColor(curClass.colour).setDescription(`
-							The crusader is built to stand endless attacks. 
-							Crusaders protect allies at all costs while using holy magic, while some crusaders of a deeper, darker place use blood magic against their opponents to their advantage.
-			
-							Usable equipment types:
-
-							Starting equipment:
-
-							Base stats:
-							__Health__: **${curClass.stats.base.hp}**
-							__Mana__: **${curClass.stats.base.mp}**
-							__Strength__: **${curClass.stats.base.str}**
-							__Dexterity__: **${curClass.stats.base.dex}**
-							__Constitution__: **${curClass.stats.base.con}**
-							__Intelligence__: **${curClass.stats.base.int}**
-							\nOnce you have chosen your class press ✅ to confirm your class`));
-								break;
-
-							case emojicharacters[7]:
 								curClass = classes.wizard;
-								sentMessage.edit(embed.setTitle('Wizard').setColor(curClass.colour).setDescription(`
-							Wizards are supreme magic-users, defined by the spells they cast. Drawing on the subtle weave of magic that permeates the cosmos.
-							Wizards cast spells of explosive fire, arcing lightning and subtle deception.
-			
-							Usable equipment types:
-
-							Starting equipment:
-
-							Base stats:
-							__Health__: **${curClass.stats.base.hp}**
-							__Mana__: **${curClass.stats.base.mp}**
-							__Strength__: **${curClass.stats.base.str}**
-							__Dexterity__: **${curClass.stats.base.dex}**
-							__Constitution__: **${curClass.stats.base.con}**
-							__Intelligence__: **${curClass.stats.base.int}**
-							\nOnce you have chosen your class press ✅ to confirm your class`));
-								break;
-
-							case emojicharacters[8]:
-								curClass = classes.warlock;
-								sentMessage.edit(embed.setTitle('Warlock').setColor(curClass.colour).setDescription(`
-							Warlocks are seekers of the knowledge that lies hidden. 
-							Through pacts made with mysterious beings of supernatural power, warlocks unlock magical effects both subtle and spectacular.
-							They use curses to bring down their enemies but they also use the help of dark demons.
-			
-							Usable equipment types:
-
-							Starting equipment:
-
-							Base stats:
-							__Health__: **${curClass.stats.base.hp}**
-							__Mana__: **${curClass.stats.base.mp}**
-							__Strength__: **${curClass.stats.base.str}**
-							__Dexterity__: **${curClass.stats.base.dex}**
-							__Constitution__: **${curClass.stats.base.con}**
-							__Intelligence__: **${curClass.stats.base.int}**
-							\nOnce you have chosen your class press ✅ to confirm your class`));
 								break;
 
 							case '✅':
 								try {
-									character.setClass(message.author.id, curClass);
+									client.characterCommands.setClass(msgUser, curClass);
 								}
 								catch (error) {
 									return sentMessage.edit(embed.setColor(curClass.colour).setDescription('Something went wrong'));
 								}
 								sentMessage.edit(embed.setColor(curClass.colour).setDescription(`You have chosen the class ${curClass.name}`));
-								sentMessage.reactions.removeAll();
-								break;
+								return sentMessage.reactions.removeAll();
 						}
-
+						setClass(curClass, sentMessage, embed);
 					});
 					collector.on('end', () => sentMessage.reactions.removeAll());
 				});
@@ -243,8 +79,8 @@ module.exports = {
 					sentMessage.react('✅');
 
 					sentMessage.awaitReactions(filter, { max: 1, time: 60000 })
-						.then(async () => {
-							await character.resetClass(message.author.id);
+						.then(() => {
+							client.characterCommands.resetClass(msgUser);
 							sentMessage.edit(embed.setDescription('Class reset.'));
 							sentMessage.reactions.removeAll();
 						});
@@ -252,3 +88,19 @@ module.exports = {
 		}
 	},
 };
+
+function setClass(curClass, sentMessage, embed) {
+	sentMessage.edit(embed.setTitle(curClass.name)
+		.setColor(curClass.colour).setDescription(`
+					${curClass.description}
+
+					Base stats:
+					__Health__: **${curClass.stats.base.maxHP}**
+					__Mana__: **${curClass.stats.base.maxMP}**
+					__Strength__: **${curClass.stats.base.Strength}**
+					__Dexterity__: **${curClass.stats.base.Dexterity}**
+					__Constitution__: **${curClass.stats.base.Constitution}**
+					__Intelligence__: **${curClass.stats.base.Intelligence}**
+					\nOnce you have chosen your class press ✅ to confirm your class`)
+	);
+}
