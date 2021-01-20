@@ -27,9 +27,6 @@ module.exports = {
 					case 'admin':
 						adminCommands += `**${command.name}** - ${command.summary}\n`;
 						break;
-					case 'music':
-						musicCommands += `**${command.name}** - ${command.summary}\n`;
-						break;
 					case 'misc':
 						miscCommands += `**${command.name}** - ${command.summary}\n`;
 						break;
@@ -52,7 +49,6 @@ module.exports = {
 								__**PvP Commands**__\n${pvpCommands}\n
 								__**Economy Commands**__\n${economyCommands}\n
 								__**Miscellaneous Commands**__\n${miscCommands}\n
-								__**Music Commands**__\n${musicCommands}\n
 								__**Admin Commands**__\n${adminCommands}\n
 								`)
 				.addField('__**Help**__', '**You can send `help [command name]` to get info on a specific command!**')

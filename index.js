@@ -12,8 +12,6 @@ const { util } = require('./util/util');
 require('dotenv').config();
 const client = new Discord.Client();
 const cooldowns = new Discord.Collection();
-const active = new Map();
-client.music = { active: active };
 client.commands = new Discord.Collection();
 const escapeRegex = str => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 moment().format();

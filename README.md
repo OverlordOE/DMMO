@@ -5,7 +5,6 @@ Neija is a fun bot that has all kinds of random features but is primarily focuse
 - Get lootboxes and open them for rewards
 - Multiple ways to get and spend your money including killing players and taking their money.
 - Fun gambling minigames.
-- Fully funtional youtube music playing with looping functionality.
 - Much more to come in the future based on user suggestions!
 
 
