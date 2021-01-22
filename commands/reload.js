@@ -5,17 +5,13 @@ module.exports = {
 	aliases: ['r', 're'],
 	category: 'debug',
 	args: true,
-	cooldown: 0,
 
-
-	execute(message, args, msgUser, profile, guildProfile, client, logger, cooldowns) {
+	execute(message, args, msgUser, client, logger) {
 		const commandName = args[0].toLowerCase();
 		const command = message.client.commands.get(commandName)
 			|| message.client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 
-		if (!command) {
-			return message.channel.send(`There is no command with name or alias \`${commandName}\`, ${message.author}!`);
-		}
+		if (!command) return message.channel.send(`There is no command with name or alias \`${commandName}\`, ${message.author}!`);
 
 		delete require.cache[require.resolve(`./${command.name}.js`)];
 

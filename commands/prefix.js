@@ -1,22 +1,20 @@
 module.exports = {
 	name: 'prefix',
-	summary: 'Change the prefix of the client for this server',
-	description: 'Change the prefix of the client for this server.',
+	summary: 'Change the prefix of the bot for this server',
+	description: 'Change the prefix of the bot for this server.',
 	category: 'admin',
 	args: false,
 	usage: '',
 
-	cooldown: 3,
-
-	async execute(message, args, msgUser, profile, guildProfile, client, logger, cooldowns) {
+	async execute(message, args, msgUser, client, logger) {
 		const id = message.guild.id;
 
 		if (args[0]) {
 			const newPrefix = args[0];
-			guildProfile.setPrefix(id, newPrefix);
+			client.guildCommands.setPrefix(id, newPrefix);
 			return message.channel.send(`Changed the prefix for this server too: ${newPrefix}`);
 		}
-		const prefix = await guildProfile.getPrefix(id);
+		const prefix = await client.guildCommands.getPrefix(id);
 		return message.channel.send(`The prefix for this server is: ${prefix}`);
 	},
 };

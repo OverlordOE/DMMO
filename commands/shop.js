@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const fs = require('fs');
+const items = require('../data/items');
 module.exports = {
 	name: 'shop',
 	summary: 'Shows all the shop items',
@@ -9,30 +9,29 @@ module.exports = {
 	args: false,
 	usage: '',
 
-	async execute(message, args, msgUser, profile, guildProfile, client, logger, cooldowns) {
-		const itemData = fs.readFileSync('data/items.json');
-		const items = JSON.parse(itemData);
-		let consumable = '__**Consumables:**__\n';
+	execute(message, args, msgUser, client, logger) {
+
 		let collectables = '__**Collectables:**__\n';
 		let chests = '__**Chests:**__\n';
+		let equipment = '__**Equipment:**__\n';
 
-		items.map(item => {
-			if (item.cost) {
-				if (item.ctg == 'consumable') { consumable += `${item.emoji} ${item.name}: **${item.cost}💰**\n`; }
-				else if (item.ctg == 'collectables') { collectables += `${item.emoji} ${item.name}: **${item.cost}💰**\n`; }
-				else if (item.ctg == 'chests') { chests += `${item.emoji} ${item.name}: **${item.cost}💰**\n`; }
+		Object.values(items).sort((a, b) => a.value - b.value).map((i) => {
+			if (i.buyable) {
+				if (i.ctg == 'collectable') collectables += `${i.emoji} ${i.name}: ${client.util.formatNumber(i.value)}💰\n`;
+				else if (i.ctg == 'chest') chests += `${i.emoji} ${i.name}: ${client.util.formatNumber(i.value)}💰\n`;
+				else if (i.ctg == 'equipment') equipment += `${i.emoji}${i.name}: ${client.util.formatNumber(i.value)}💰\n`;
 			}
 		});
 
-		const description = `${chests}\n${consumable}\n${collectables}`;
+		const description = `${chests}\n${equipment}\n${collectables}`;
 
 		const embed = new Discord.MessageEmbed()
-			.setTitle('DMMO Shop')
+			.setTitle('Neia Shop')
 			.setThumbnail(client.user.displayAvatarURL())
 			.setDescription(description)
+			.setColor(client.characterCommands.getColour(msgUser))
 
-			.setTimestamp()
-			.setFooter('DMMO', client.user.displayAvatarURL());
+			.setFooter('Use the items command to see the full item list.', client.user.displayAvatarURL());
 
 		return message.channel.send(embed);
 	},
