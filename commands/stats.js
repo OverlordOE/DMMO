@@ -1,8 +1,8 @@
 const Discord = require('discord.js');
 module.exports = {
-	name: 'stats',
-	summary: 'Shows how much servers and users use Neia',
-	description: 'Shows how much servers and users use Neia.',
+	name: 'Stats',
+	summary: 'Shows how much servers and users use Project Neia',
+	description: 'Shows how much servers and users use Project Neia.',
 	category: 'misc',
 	aliases: ['stat', 'server', 'members'],
 	args: false,
@@ -11,10 +11,10 @@ module.exports = {
 	async execute(message, args, msgUser, client, logger) {
 
 		const embed = new Discord.MessageEmbed()
-			.setTitle('Neia Stats')
+			.setTitle('Project Neia Stats')
 			.setThumbnail(message.author.displayAvatarURL())
 			.setColor(client.characterCommands.getColour(msgUser))
-			.setFooter('Neia', client.user.displayAvatarURL());
+			.setFooter('Project Neia', client.user.displayAvatarURL());
 
 		let guildTotal = 0;
 		let memberTotal = 0;
@@ -22,7 +22,7 @@ module.exports = {
 			guildTotal++;
 			if (!isNaN(memberTotal) && guild.id != 264445053596991498) memberTotal += Number(guild.memberCount);
 		});
-		message.channel.send(embed.setDescription(`Neia is in **${guildTotal}** servers with a total of **${memberTotal}** users.`));
+		message.channel.send(embed.setDescription(`Project Neia is in **${guildTotal}** servers with a total of **${memberTotal}** users.`));
 		client.user.setActivity(`with ${memberTotal} users.`);
 	},
 };

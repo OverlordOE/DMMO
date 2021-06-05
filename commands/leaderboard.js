@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 module.exports = {
-	name: 'leaderboard',
+	name: 'Leaderboard',
 	summary: 'Shows global leaderboard',
 	description: 'Shows global leaderboard.',
 	category: 'info',
@@ -35,7 +35,7 @@ module.exports = {
 
 
 		const embed = new Discord.MessageEmbed()
-			.setTitle('Neia leaderboard')
+			.setTitle('Project Neia leaderboard')
 			.setDescription(editDescription(currentList, page, ' Net Worth \n'))
 			.setThumbnail(client.user.displayAvatarURL())
 			.setFooter('Use the emojis to scroll through the list or switch the list.', client.user.displayAvatarURL());

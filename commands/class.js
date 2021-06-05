@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 const emojicharacters = require('../data/emojiCharacters');
 const classes = require('../data/classes');
 module.exports = {
-	name: 'class',
+	name: 'Class',
 	summary: 'Choose your class',
 	description: 'Choose your class that you will use. You can reset your client.characterCommands by using this command again.',
 	category: 'pvp',

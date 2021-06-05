@@ -2,7 +2,7 @@
 /* eslint-disable max-nested-callbacks */
 const Discord = require('discord.js');
 module.exports = {
-	name: 'trade',
+	name: 'Trade',
 	summary: 'Trade money or items to other people',
 	description: 'Trade money and items to other people.',
 	aliases: ['give', 'donate', 'transfer'],
@@ -14,7 +14,7 @@ module.exports = {
 
 		const filter = m => m.author.id === msgUser;
 		const embed = new Discord.MessageEmbed()
-			.setTitle('Neia Trading Center')
+			.setTitle('Project Neia Trading Center')
 			.setColor(client.characterCommands.getColour(msgUser))
 			.setFooter('You can only trade to people on the same server.', client.user.displayAvatarURL());
 
@@ -39,7 +39,7 @@ module.exports = {
 					else { temp += `${args[i]}`; }
 				}
 
-				const item = client.characterCommands.getItem(temp);
+				const item = client.util.getItem(temp);
 				if (target && item) { itemTrade(client, target, amount, item, sentMessage, embed, msgUser); }
 				else if (target && amount > 1) { moneyTrade(client, target, amount, sentMessage, embed, msgUser); }
 				else {
@@ -70,7 +70,7 @@ module.exports = {
 											// item trade
 											if (isNaN(goods)) {
 
-												const item = client.characterCommands.getItem(goods);
+												const item = client.util.getItem(goods);
 												if (!item) return sentMessage.edit(embed.setDescription(`${item} doesn't exist.`));
 
 												// item trade

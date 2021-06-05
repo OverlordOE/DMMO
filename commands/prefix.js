@@ -1,5 +1,5 @@
 module.exports = {
-	name: 'prefix',
+	name: 'Prefix',
 	summary: 'Change the prefix of the bot for this server',
 	description: 'Change the prefix of the bot for this server.',
 	category: 'admin',

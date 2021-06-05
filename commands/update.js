@@ -1,5 +1,5 @@
 module.exports = {
-	name: 'update',
+	name: 'Update',
 	description: '',
 	category: 'debug',
 	aliases: [],
@@ -11,7 +11,7 @@ module.exports = {
 			client.characterCommands.map(async (u) => {
 				const user = await client.characterCommands.getUser(u.user_id);
 				user.firstCommand = true;
-				user.save();
+				client.characterCommands.saveUser(user);
 			});
 		} catch (error) {
 			return logger.error(error.stack);

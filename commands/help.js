@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 module.exports = {
-	name: 'help',
+	name: 'Help',
 	description: 'List all the commands or get info about a specific command.',
 	category: 'help',
 	aliases: ['commands'],
@@ -21,7 +21,7 @@ module.exports = {
 			;
 
 		if (!args.length) {
-			help.setTitle('Neia command list');
+			help.setTitle('Project Neia command list');
 			commands.map(command => {
 				switch (command.category) {
 					case 'admin':
@@ -39,6 +39,9 @@ module.exports = {
 					case 'info':
 						infoCommands += `**${command.name}** - ${command.summary}\n`;
 						break;
+					case 'music':
+						musicCommands += `**${command.name}** - ${command.summary}\n`;
+						break;
 					default:
 						break;
 				}
@@ -48,13 +51,14 @@ module.exports = {
 			help.setDescription(`__**Info Commands**__\n${infoCommands}\n
 								__**PvP Commands**__\n${pvpCommands}\n
 								__**Economy Commands**__\n${economyCommands}\n
+								__**Music Commands**__\n${musicCommands}\n
 								__**Miscellaneous Commands**__\n${miscCommands}\n
 								__**Admin Commands**__\n${adminCommands}\n
 								`)
 				.addField('__**Help**__', '**You can send `help [command name]` to get info on a specific command!**')
 				.addField('Helpfull Links', `[Click here to invite me to your server](https://discord.com/oauth2/authorize?client_id=684458276129079320&scope=bot&permissions=1178070081)\n
 							 [Click here to join the support server](https://discord.gg/hFGxVDT)\n
-							 [Click here to submit a bug or request  feature](https://github.com/OverlordOE/Neia/issues/new/choose)\n
+							 [Click here to submit a bug or request  feature](https://github.com/OverlordOE/Project Neia/issues/new/choose)\n
 							 For more info contact: OverlordOE#0717
 			`);
 		}

@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 module.exports = {
-	name: 'hourly',
+	name: 'Hourly',
 	summary: 'Get an hourly gift',
 	description: 'Get an hourly gift and part of your passive income from your collectables.',
 	aliases: ['h', 'hour'],
@@ -17,7 +17,7 @@ module.exports = {
 		if (luck == 0) chest = 'Mystery Chest';
 		else if (luck == 1 || luck == 2) chest = 'Rare chest';
 		else chest = 'Common Chest';
-		chest = client.characterCommands.getItem(chest);
+		chest = client.util.getItem(chest);
 
 		const embed = new Discord.MessageEmbed()
 			.setTitle('Hourly Reward')

@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 module.exports = {
-	name: 'daily',
+	name: 'Daily',
 	summary: 'Get a daily gift',
 	description: 'Get a daily gift and part of your passive income from your collectables.',
 	category: 'economy',
@@ -17,7 +17,7 @@ module.exports = {
 		if (luck == 0) chest = 'Epic chest';
 		if (luck == 1) chest = 'Mystery chest';
 		else chest = 'Rare chest';
-		chest = client.characterCommands.getItem(chest);
+		chest = client.util.getItem(chest);
 
 
 		const embed = new Discord.MessageEmbed()

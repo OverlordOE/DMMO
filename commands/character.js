@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const itemInfo = require('../data/items');
 module.exports = {
-	name: 'character',
+	name: 'Character',
 	summary: 'Shows your character or the tagger user\'s character',
 	description: 'Shows your character or the tagger user\'s character.\nYou can click on the reaction emojis to switch tabs to different pages.',
 	category: 'info',
@@ -38,7 +38,8 @@ module.exports = {
 		if (userClass) {
 			className = userClass.name;
 			colour = userClass.colour;
-		} else {
+		}
+		else {
 			className = 'No class';
 			colour = '#ffffff';
 		}
@@ -119,7 +120,7 @@ module.exports = {
 			let equipmentDescription = '';
 			for (const slot in equipment) {
 				if (equipment[slot]) {
-					const item = client.characterCommands.getItem(equipment[slot]);
+					const item = client.util.getItem(equipment[slot]);
 					equipmentDescription += `\n**${slot}**: ${item.emoji}${item.name}`;
 				}
 				else equipmentDescription += `\n**${slot}**: Nothing`;

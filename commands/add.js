@@ -1,5 +1,5 @@
 module.exports = {
-	name: 'add',
+	name: 'Add',
 	description: 'Adds money too the mentioned user.',
 	category: 'debug',
 	args: true,
@@ -16,7 +16,7 @@ module.exports = {
 			return message.channel.send(`Added ${client.util.formatNumber(amount)} to every available user`);
 		}
 		else if (args[0] == 'item') {
-			const item = client.characterCommands.getItem(args[1]);
+			const item = client.util.getItem(args[1]);
 			client.characterCommands.addItem(targetUser, item, args[2]);
 			return message.channel.send(`Added ${args[2]} __${args[1]}__ to ${target}`);
 		}

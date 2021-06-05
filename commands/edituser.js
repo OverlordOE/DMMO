@@ -1,5 +1,5 @@
 module.exports = {
-	name: 'edituser',
+	name: 'Edituser',
 	description: 'Edits target user.',
 	category: 'debug',
 	args: true,

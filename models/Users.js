@@ -1,3 +1,5 @@
+const moment = require('moment');
+const now = moment();
 module.exports = (sequelize, DataTypes) => {
 	return sequelize.define('users', {
 		user_id: {
@@ -5,78 +7,24 @@ module.exports = (sequelize, DataTypes) => {
 			primaryKey: true,
 		},
 
-		// MONEY
-		balance: {
-			type: DataTypes.INTEGER,
-			defaultValue: 0,
-			allowNull: false,
-		},
-		totalEarned: {
-			type: DataTypes.INTEGER,
-			defaultValue: 0,
-			allowNull: false,
-		},
-		networth: {
-			type: DataTypes.INTEGER,
-			defaultValue: 0,
-			allowNull: false,
-		},
-
-		// CHARACTER
-		level: {
-			type: DataTypes.INTEGER,
-			defaultValue: 1,
-			allowNull: false,
-		},
-		exp: {
-			type: DataTypes.INTEGER,
-			defaultValue: 0,
-			allowNull: false,
-		},
-		class: {
-			type: DataTypes.STRING,
-			defaultValue: null,
-			allowNull: true,
-		},
-		equipment: {
+		info: {
 			type: DataTypes.JSON,
-			defaultValue: null,
-			allowNull: true,
-		},
-		baseStats: {
-			type: DataTypes.JSON,
-			defaultValue: null,
-			allowNull: true,
-		},
-		stats: {
-			type: DataTypes.JSON,
-			defaultValue: null,
-			allowNull: true,
-		},
-
-
-		// COOLDOWNS
-		lastDaily: {
-			type: DataTypes.STRING,
-			defaultValue: '',
+			defaultValue: JSON.stringify({
+				balance: 0,
+				totalEarned: 0,
+				networth: 0,
+				level: 1,
+				exp: 0,
+				class: null,
+				equipment: { weapon: null, offhand: null },
+				baseStats: null,
+				stats: null,
+				lastDaily: now.subtract(2, 'd').toString(),
+				lastHourly: now.subtract(1, 'd').toString(),
+				lastVote: now.subtract(1, 'd').toString(),
+				firstCommand: true,
+			}),
 			allowNull: false,
-		},
-		lastHourly: {
-			type: DataTypes.STRING,
-			defaultValue: '',
-			allowNull: false,
-		},
-		lastVote: {
-			type: DataTypes.STRING,
-			defaultValue: '',
-			allowNull: false,
-		},
-
-
-		// MISC
-		firstCommand: {
-			type: DataTypes.BOOLEAN,
-			defaultValue: true,
 		},
 	},
 		{

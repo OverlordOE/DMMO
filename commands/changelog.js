@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 module.exports = {
-	name: 'changelog',
+	name: 'Changelog',
 	summary: 'Shows the latest major update that the bot has received',
 	description: 'Shows the latest major update that the bot has received.',
 	category: 'info',
@@ -10,7 +10,7 @@ module.exports = {
 
 	execute(message, args, msgUser, client, logger) {
 		const embed = new Discord.MessageEmbed()
-			.setTitle('Neia V2.4: Shields and music fix')
+			.setTitle('Project Neia V2.4: Shields and music fix')
 			.setFooter('To see earlier updates join the support server.', client.user.displayAvatarURL())
 			.addField('Starting Off', `After some prep work i finally got shields to work again, for now they just protect you from some damage but more stats coming soone. I also fixed the music player and added some QoL features too it.
 			\n`)

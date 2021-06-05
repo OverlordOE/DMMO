@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 module.exports = {
-	name: 'equip',
+	name: 'Equip',
 	summary: 'Equip an item from your inventory',
 	description: 'Equip an item from your inventory.',
 	category: 'pvp',
@@ -14,7 +14,7 @@ module.exports = {
 		let item;
 
 		const embed = new Discord.MessageEmbed()
-			.setTitle('Neia Equipping')
+			.setTitle('Project Neia Equipping')
 			.setThumbnail(message.author.displayAvatarURL())
 			.setDescription('What item do you want to equip?')
 			.setColor(client.characterCommands.getColour(msgUser))
@@ -25,7 +25,7 @@ module.exports = {
 			else temp += `${args[i]}`;
 		}
 
-		item = client.characterCommands.getItem(temp);
+		item = client.util.getItem(temp);
 		if (item) embed.attachFiles(`assets/items/${item.picture}`);
 
 		message.channel.send(embed).then(async sentMessage => {
@@ -40,7 +40,7 @@ module.exports = {
 
 				message.channel.awaitMessages(filter, { max: 1, time: 60000 })
 					.then(async collected => {
-						item = client.characterCommands.getItem(collected.first().content);
+						item = client.util.getItem(collected.first().content);
 						collected.first().delete();
 
 						if (item) {

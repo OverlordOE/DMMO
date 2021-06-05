@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const items = require('../data/items');
 module.exports = {
-	name: 'shop',
+	name: 'Shop',
 	summary: 'Shows all the shop items',
 	description: 'Shows all the shop items.',
 	category: 'info',
@@ -26,7 +26,7 @@ module.exports = {
 		const description = `${chests}\n${equipment}\n${collectables}`;
 
 		const embed = new Discord.MessageEmbed()
-			.setTitle('Neia Shop')
+			.setTitle('Project Neia Shop')
 			.setThumbnail(client.user.displayAvatarURL())
 			.setDescription(description)
 			.setColor(client.characterCommands.getColour(msgUser))

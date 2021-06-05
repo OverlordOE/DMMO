@@ -3,17 +3,19 @@ const Discord = require('discord.js');
 const winston = require('winston');
 const moment = require('moment');
 const cron = require('cron');
+const fs = require('fs');
 const DBL = require('dblapi.js');
 const dbl = new DBL(process.env.DBL_TOKEN, { webhookPort: 3000, webhookAuth: process.env.WEBHOOK_TOKEN });
-const clientCommands = require('./commands');
 const { Users, characterCommands } = require('./util/characterCommands');
 const { guildCommands, Guilds } = require('./util/guildCommands');
 const { util } = require('./util/util');
-require('dotenv').config();
 const client = new Discord.Client();
 const cooldowns = new Discord.Collection();
+const active = new Map();
+client.music = { active: active };
 client.commands = new Discord.Collection();
 const escapeRegex = str => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+require('dotenv').config();
 moment().format();
 
 
@@ -55,10 +57,16 @@ process.on('uncaughtException', e => logger.error(e));
 
 
 // Load in Commands
-Object.keys(clientCommands).map(key => client.commands.set(clientCommands[key].name, clientCommands[key]));
+client.commands = new Discord.Collection();
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+for (const file of commandFiles) {
+	const command = require(`./commands/${file}`);
+	client.commands.set(command.name.toLowerCase(), command);
+}
 
 
 // Startup Tasks
+
 client.login(process.env.TEST_TOKEN);
 client.on('ready', async () => {
 	try {
@@ -152,15 +160,15 @@ client.on('message', async message => {
 		client.commands.get('changelog').execute(message, args, user, client, logger);
 		user.firstCommand = false;
 		logger.info(`New user ${message.author.tag}`);
-		user.save();
+		client.characterCommands.saveUser(user);
 	}
 
 	// Chech for manage message permission
 	if (!message.guild.member(client.user).hasPermission('MANAGE_MESSAGES')) {
-		logger.warn(`Neia doesnt have MANAGE_MESSAGES permissions on guild ${guild.name}`);
-		message.reply('Please make sure Neia has the `Manage Messages` permissions, otherwise the commands may not function properly');
+		logger.warn(`Project Neia doesnt have MANAGE_MESSAGES permissions on guild ${guild.name}`);
+		message.reply('Please make sure Project Neia has the `Manage Messages` permissions, otherwise the commands may not function properly');
 	}
-	
+
 
 	// Execute command
 	logger.log('info', `${message.author.tag} Called command: ${commandName} ${args.join(' ')}, in guild: ${message.guild.name}`);
@@ -184,9 +192,6 @@ client.on('message', async message => {
 
 // Regular tasks executed every 3 hours
 const botTasks = new cron.CronJob('0 0-23/3 * * *', () => {
-	const lottery = client.commands.get('lottery');
-	lottery.execute(client, logger);
-
 	let memberTotal = 0;
 	client.guilds.cache.forEach(guild => { if (!isNaN(memberTotal) && guild.id != 264445053596991498) memberTotal += Number(guild.memberCount); });
 	client.user.setActivity(`with ${memberTotal} users.`);
@@ -221,14 +226,14 @@ dbl.webhook.on('vote', async vote => {
 		.setTitle('Vote Reward')
 		.setThumbnail(discordUser.displayAvatarURL())
 		.setColor(characterCommands.getColour(user))
-		.setFooter('Neia', client.user.displayAvatarURL());
+		.setFooter('Project Neia', client.user.displayAvatarURL());
 
 	let chest;
 	const luck = Math.floor(Math.random() * 7);
 	if (luck == 0) chest = 'Epic chest';
 	if (luck == 1) chest = 'Mystery chest';
 	else chest = 'Rare chest';
-	chest = characterCommands.getItem(chest);
+	chest = util.getItem(chest);
 
 	if (chest.picture) {
 		embed.attachFiles(`assets/items/${chest.picture}`)

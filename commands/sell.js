@@ -4,7 +4,7 @@ const Discord = require('discord.js');
 const itemInfo = require('../data/items');
 const sellPercentage = 0.8;
 module.exports = {
-	name: 'sell',
+	name: 'Sell',
 	summary: `Sell items to get ${sellPercentage * 100}% of your money back`,
 	description: `Sell items to get ${sellPercentage * 100}% of your money back.`,
 	aliases: ['refund'],
@@ -14,13 +14,13 @@ module.exports = {
 
 	execute(message, args, msgUser, client, logger) {
 
-		const filter = m => m.author.id === msgUser.user_id;
+		const filter = m => m.author.id === message.author.id;
 		let amount = 1;
 		let temp = '';
 		let item;
 
 		const embed = new Discord.MessageEmbed()
-			.setTitle('Neia Refunds')
+			.setTitle('Project Neia Refunds')
 			.setThumbnail(message.author.displayAvatarURL())
 			.setDescription('What do you want to refund? `80% refund`')
 			.setColor(client.characterCommands.getColour(msgUser))
@@ -36,7 +36,7 @@ module.exports = {
 				else temp += `${args[i]}`;
 			}
 
-			item = client.characterCommands.getItem(temp);
+			item = client.util.getItem(temp);
 			if (temp == 'all') {
 				sentMessage.edit(embed.setDescription('Are you sure that you want to sell your WHOLE inventory?\n\nReply with yes to continue'));
 				message.channel.awaitMessages(filter, { max: 1, time: 60000 })
@@ -70,7 +70,7 @@ module.exports = {
 				message.channel.awaitMessages(filter, { max: 1, time: 60000 })
 
 					.then(async collected => {
-						const item = client.characterCommands.getItem(collected.first().content);
+						const item = client.util.getItem(collected.first().content);
 						if (!item) return sentMessage.edit(embed.setDescription(`\`${collected.first().content}\` is not a valid item.`));
 						collected.first().delete();
 

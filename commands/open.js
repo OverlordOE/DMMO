@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const loottable = require('../data/loottables');
 module.exports = {
-	name: 'open',
+	name: 'Open',
 	summary: 'open chests',
 	description: 'Open chests to get the contents within.',
 	category: 'economy',
@@ -31,7 +31,7 @@ module.exports = {
 
 			if (amount > 1) {
 
-				const item = client.characterCommands.getItem(`${chest} chest`);
+				const item = client.util.getItem(`${chest} chest`);
 				if (!await client.characterCommands.hasItem(msgUser, item, amount)) return message.reply(`You don't have ${amount} __${item.name}(s)__!`);
 				lootEmbed.setTitle(`${amount} ${chest} chests`);
 
@@ -46,7 +46,7 @@ module.exports = {
 				}
 
 				for (const loot in lootlist) {
-					const lootItem = client.characterCommands.getItem(loot);
+					const lootItem = client.util.getItem(loot);
 					description += `\n**${client.util.formatNumber(lootlist[loot])}** ${lootItem.emoji}__${lootItem.name}__`;
 					client.characterCommands.addItem(msgUser, lootItem, lootlist[loot]);
 				}
@@ -58,13 +58,13 @@ module.exports = {
 				message.channel.send(lootEmbed);
 				client.characterCommands.removeItem(msgUser, item, amount);
 			}
-			
+
 			else {
-				const item = client.characterCommands.getItem(`${chest} chest`);
+				const item = client.util.getItem(`${chest} chest`);
 				if (!await client.characterCommands.hasItem(msgUser, item, amount)) return message.reply(`You don't have ${amount} __${item.name}(s)__!`);
 
 				const loot = loottable[chest]();
-				const lootItem = client.characterCommands.getItem(loot.name);
+				const lootItem = client.util.getItem(loot.name);
 				const itemAmount = loot.amount[0] + Math.floor(Math.random() * loot.amount[1]);
 
 

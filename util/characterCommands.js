@@ -15,28 +15,39 @@ const Users = sequelize.import('../models/Users');
 const UserItems = sequelize.import('../models/UserItems');
 const items = require('../data/items');
 const classes = require('../data/classes');
+const { util } = require('./util');
 
 Reflect.defineProperty(characterCommands, 'newUser', {
 	value: async function newUser(id) {
-		const now = moment();
 		const user = await Users.create({
 			user_id: id,
-			balance: 0,
-			totalEarned: 0,
-			networth: 0,
-			level: 1,
-			exp: 0,
-			equipment: JSON.stringify({ weapon: null, offhand: null }),
-			lastDaily: now.subtract(2, 'days').toString(),
-			lastHourly: now.subtract(1, 'days').toString(),
-			lastVote: now.subtract(1, 'days').toString(),
-			firstCommand: true,
 		});
 		characterCommands.set(id, user);
 		return user;
 	},
 });
 
+
+Reflect.defineProperty(characterCommands, 'getUser', {
+	value: async function getUser(id) {
+		let user = characterCommands.get(id);
+		if (!user) user = await characterCommands.newUser(id);
+
+		const userInfo = JSON.parse(user.info);
+		userInfo.user_id = user.user_id;
+		return userInfo;
+	},
+});
+
+Reflect.defineProperty(characterCommands, 'saveUser', {
+	value: async function saveUser(userInfo) {
+		let user = characterCommands.get(userInfo.user_id);
+		if (!user) user = await characterCommands.newUser(userInfo.user_id);
+
+		user.info = JSON.stringify(userInfo);
+		return user.save();
+	},
+});
 
 
 
@@ -80,7 +91,7 @@ Reflect.defineProperty(characterCommands, 'equip', {
 
 			equipped[equipment.slot] = equipment.name;
 			user.equipment = JSON.stringify(equipped);
-			return user.save();
+			return characterCommands.saveUser(user);
 		}
 		throw Error(`${equipment} is not a valid item`);
 	},
@@ -125,7 +136,7 @@ Reflect.defineProperty(characterCommands, 'resetClass', {
 		user.level = 1;
 		user.exp = 0;
 
-		return user.save();
+		return characterCommands.saveUser(user);
 	},
 });
 Reflect.defineProperty(characterCommands, 'setClass', {
@@ -155,13 +166,13 @@ Reflect.defineProperty(characterCommands, 'setClass', {
 		// }
 
 		for (let i = 0; i < newClass.startEquipment.length; i++) {
-			const equipment = characterCommands.getItem(newClass.startEquipment[i]);
+			const equipment = util.getItem(newClass.startEquipment[i]);
 			await characterCommands.addItem(user, equipment);
 			characterCommands.equip(user, equipment);
 		}
 
 		await characterCommands.calculateStats(user);
-		return user.save();
+		return characterCommands.saveUser(user);
 	},
 });
 
@@ -192,7 +203,7 @@ Reflect.defineProperty(characterCommands, 'calculateStats', {
 		const equipment = await characterCommands.getEquipment(user);
 		for (const slot in equipment) {
 			if (equipment[slot]) {
-				const item = characterCommands.getItem(equipment[slot]);
+				const item = util.getItem(equipment[slot]);
 
 				if (item.stats)
 					for (const itemEffect in item.stats)
@@ -206,7 +217,7 @@ Reflect.defineProperty(characterCommands, 'calculateStats', {
 		stats.Critchance += stats.Dexterity / 8;
 
 		user.stats = JSON.stringify(stats);
-		user.save();
+		characterCommands.saveUser(user);
 		return stats;
 	},
 });
@@ -218,7 +229,7 @@ Reflect.defineProperty(characterCommands, 'addExp', {
 			'You dont have a class yet so you cant gain experience!\nUse the command `class` to get a class');
 
 		user.exp += Number(exp);
-		user.save();
+		characterCommands.saveUser(user);
 		return characterCommands.levelInfo(user, message);
 	},
 });
@@ -259,7 +270,7 @@ Reflect.defineProperty(characterCommands, 'levelInfo', {
 			stats.Constitution += statGrowth.Constitution;
 			stats.Intelligence += statGrowth.Intelligence;
 			user.baseStats = JSON.stringify(stats);
-			user.save();
+			characterCommands.saveUser(user);
 
 			message.reply(`you have leveled up to level ${user.level}.
 			You gain the following stat increases:
@@ -312,7 +323,7 @@ Reflect.defineProperty(characterCommands, 'addItem', {
 		});
 
 		user.networth += item.value * parseInt(amount);
-		user.save();
+		characterCommands.saveUser(user);
 
 		if (userItem) {
 			userItem.amount += parseInt(amount);
@@ -409,21 +420,13 @@ Reflect.defineProperty(characterCommands, 'getItem', {
 
 
 // Misc
-Reflect.defineProperty(characterCommands, 'getUser', {
-	value: async function getUser(id) {
-		let user = characterCommands.get(id);
-		if (!user) user = await characterCommands.newUser(id);
-		return user;
-	},
-});
-
 Reflect.defineProperty(characterCommands, 'addMoney', {
 	value: function addMoney(user, amount) {
 		if (isNaN(amount)) throw Error(`${amount} is not a valid number.`);
 		user.balance += Number(amount);
 		if (amount > 0) user.totalEarned += Number(amount);
 
-		user.save();
+		characterCommands.saveUser(user);
 		return Math.floor(user.balance);
 	},
 });
@@ -468,7 +471,7 @@ Reflect.defineProperty(characterCommands, 'getDaily', {
 Reflect.defineProperty(characterCommands, 'setDaily', {
 	value: function setDaily(user) {
 		user.lastDaily = moment().toString();
-		return user.save();
+		return characterCommands.saveUser(user);
 	},
 });
 
@@ -483,7 +486,7 @@ Reflect.defineProperty(characterCommands, 'getHourly', {
 Reflect.defineProperty(characterCommands, 'setHourly', {
 	value: function setHourly(user) {
 		user.lastHourly = moment().toString();
-		return user.save();
+		return characterCommands.saveUser(user);
 	},
 });
 
@@ -491,7 +494,7 @@ Reflect.defineProperty(characterCommands, 'setHourly', {
 Reflect.defineProperty(characterCommands, 'setVote', {
 	value: function setVote(user) {
 		user.lastVote = moment().toString();
-		return user.save();
+		return characterCommands.saveUser(user);
 	},
 });
 Reflect.defineProperty(characterCommands, 'getVote', {

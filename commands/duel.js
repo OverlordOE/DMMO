@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 module.exports = {
-	name: 'duel',
+	name: 'Duel',
 	summary: 'Duel other players to the death',
 	description: 'Duel other players to the death. If you kill them you will gain a portion of their current items and money.',
 	args: true,
@@ -94,7 +94,7 @@ module.exports = {
 			defender.hp -= damage;
 			if (defender.hp < 0) defender.hp = 0;
 
-			const weapon = client.characterCommands.getItem(attacker.equipment['Main hand']);
+			const weapon = client.util.getItem(attacker.equipment['Main hand']);
 			description += `${attacker.user.username} dealt ${client.util.formatNumber(damage)} with their ${weapon.emoji}${weapon.name}\n`;
 			return setEmbed(sentMessage);
 		}

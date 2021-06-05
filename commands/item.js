@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const items = require('../data/items');
 module.exports = {
-	name: 'item',
+	name: 'Item',
 	summary: 'Shows information about a specific item',
 	description: 'Shows information about a specific item.',
 	category: 'info',
@@ -20,7 +20,7 @@ module.exports = {
 
 
 		if (temp) {
-			const item = client.characterCommands.getItem(temp);
+			const item = client.util.getItem(temp);
 			if (!item) return message.reply(`${item} is not a valid item`);
 
 			embed = new Discord.MessageEmbed()
@@ -41,10 +41,6 @@ module.exports = {
 			else if (item.rarity == 'epic') embed.setColor('#a335ee');
 			else if (item.rarity == 'legendary') embed.setColor('#ff8000');
 			else embed.setColor('#eeeeee');
-
-			if (item.ctg == 'equipment')
-				for (const stat in item.stats)
-					embed.addField(stat, `**${item.stats[stat]}**`, true);
 		}
 
 		else {
@@ -58,7 +54,7 @@ module.exports = {
 				return 0;
 			}).map((i) => {
 
-				 if (i.ctg == 'collectable') collectables += `${i.emoji}${i.name}\n`;
+				if (i.ctg == 'collectable') collectables += `${i.emoji}${i.name}\n`;
 				else if (i.ctg == 'chest') chests += `${i.emoji}${i.name}\n`;
 				else if (i.ctg == 'equipment') equipment += `${i.emoji}${i.name}\n`;
 			});
@@ -66,7 +62,7 @@ module.exports = {
 			const description = `${chests}\n${equipment}\n${collectables}`;
 
 			embed = new Discord.MessageEmbed()
-				.setTitle('Neia Item List')
+				.setTitle('Project Neia Item List')
 				.setThumbnail(client.user.displayAvatarURL())
 				.setDescription(description)
 				.setColor(client.characterCommands.getColour(msgUser))

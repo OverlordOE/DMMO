@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 module.exports = {
-	name: 'use',
+	name: 'Use',
 	summary: 'Use an item from your inventory',
 	description: 'Use an item from your inventory.',
 	category: 'economy',
@@ -17,12 +17,12 @@ module.exports = {
 
 
 		const embed = new Discord.MessageEmbed()
-			.setTitle('Neia Item Use')
+			.setTitle('Project Neia Item Use')
 			.setThumbnail(message.author.displayAvatarURL())
 			.setDescription('What item do you want to use?')
 			.setThumbnail(client.user.displayAvatarURL())
 			.setColor(client.characterCommands.getColour(msgUser))
-			.setFooter('Neia', client.user.displayAvatarURL());
+			.setFooter('Project Neia', client.user.displayAvatarURL());
 
 
 		message.channel.send(embed).then(async sentMessage => {
@@ -34,7 +34,7 @@ module.exports = {
 				else temp += `${args[i]}`;
 			}
 
-			item = client.characterCommands.getItem(temp);
+			item = client.util.getItem(temp);
 			if (item) {
 				if (await client.characterCommands.hasItem(msgUser, item, amount)) use(client, sentMessage, amount, embed, item, msgUser);
 				else return sentMessage.edit(embed.setDescription(`You don't have enough __${item.emoji}${item.name}(s)__!`));
@@ -43,7 +43,7 @@ module.exports = {
 
 				message.channel.awaitMessages(filter, { max: 1, time: 60000 })
 					.then(async collected => {
-						item = client.characterCommands.getItem(collected.first().content);
+						item = client.util.getItem(collected.first().content);
 						collected.first().delete();
 
 						if (item) {

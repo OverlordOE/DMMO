@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 module.exports = {
-	name: 'buy',
+	name: 'Buy',
 	summary: 'Buy an item from the shop',
 	description: 'With this you can buy an item from the shop.\nYou can either use `buy <item> <amount> to instantly buy the items or just use `buy`.\nIf you use the latter you will get prompted to enter the name and amount of the item that you want into the chat.',
 	category: 'economy',
@@ -17,7 +17,7 @@ module.exports = {
 		let item;
 
 		const embed = new Discord.MessageEmbed()
-			.setTitle('Neia Shop')
+			.setTitle('Project Neia Shop')
 			.setThumbnail(message.author.displayAvatarURL());
 
 		message.channel.send(embed).then(sentMessage => {
@@ -29,7 +29,7 @@ module.exports = {
 				else temp += `${args[i]}`;
 			}
 
-			item = client.characterCommands.getItem(temp);
+			item = client.util.getItem(temp);
 			if (item.buyable) buy(client, sentMessage, amount, embed, item, msgUser);
 			else if (item) sentMessage.edit(embed.setDescription('You can\'t buy this item?'));
 
@@ -38,7 +38,7 @@ module.exports = {
 				message.channel.awaitMessages(filter, { max: 1, time: 60000 })
 
 					.then(collected => {
-						item = client.characterCommands.getItem(collected.first().content);
+						item = client.util.getItem(collected.first().content);
 
 						if (item && !item.buyable) return sentMessage.edit(embed.setDescription('You can\'t buy this item?'));
 						else if (!item) return sentMessage.edit(embed.setDescription(`${collected.first().content} is not a valid item.`));
