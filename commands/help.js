@@ -7,7 +7,7 @@ module.exports = {
 	usage: '<command name>',
 	args: false,
 
-	execute(message, args, msgUser, client, logger) {
+	execute(message, args, msgUser, msgGuild, client, logger) {
 		const { commands } = message.client;
 		let adminCommands = '';
 		let musicCommands = '';

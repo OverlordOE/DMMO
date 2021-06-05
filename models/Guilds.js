@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
 		},
 		prefix: {
 			type: DataTypes.STRING,
-			defaultValue: '-',
+			defaultValue: process.env.PREFIX,
 			allowNull: false,
 		},
 	},

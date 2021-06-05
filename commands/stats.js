@@ -8,7 +8,7 @@ module.exports = {
 	args: false,
 	usage: '',
 
-	async execute(message, args, msgUser, client, logger) {
+	async execute(message, args, msgUser, msgGuild, client, logger) {
 
 		const embed = new Discord.MessageEmbed()
 			.setTitle('Project Neia Stats')

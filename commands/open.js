@@ -10,7 +10,7 @@ module.exports = {
 
 	args: true,
 
-	async execute(message, args, msgUser, client, logger) {
+	async execute(message, args, msgUser, msgGuild, client, logger) {
 		const lootEmbed = new Discord.MessageEmbed()
 
 			.setFooter('You can open multiple chests at the same time.', client.user.displayAvatarURL());

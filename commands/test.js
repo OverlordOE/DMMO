@@ -3,7 +3,7 @@ module.exports = {
 	name: 'Test',
 	aliases: ['t'],
 
-	async execute(message, args, msgUser, client, logger) {
+	async execute(message, args, msgUser, msgGuild, client, logger) {
 
 		const search = args.join(' ');
 

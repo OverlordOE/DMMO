@@ -10,7 +10,7 @@ module.exports = {
 	args: false,
 	usage: '',
 
-	execute(message, args, msgUser, client, logger) {
+	execute(message, args, msgUser, msgGuild, client, logger) {
 
 		const filter = m => m.author.id === msgUser;
 		const embed = new Discord.MessageEmbed()
@@ -126,8 +126,8 @@ async function moneyTrade(client, target, amount, sentMessage, embed, msgUser) {
 	if (amount > balance) return sentMessage.edit(embed.setDescription(`You only have ${client.util.formatNumber(balance)}💰 but need ${client.util.formatNumber(amount)}.`));
 	if (amount <= 0) return sentMessage.edit(embed.setDescription('Please enter an amount greater than zero.'));
 
-	client.characterCommands.addMoney(msgUser, -amount);
-	balance = client.characterCommands.addMoney(await client.characterCommands.getUser(target.id), amount);
+	client.characterCommands.addBalance(msgUser, -amount);
+	balance = client.characterCommands.addBalance(await client.characterCommands.getUser(target.id), amount);
 	return sentMessage.edit(embed.setDescription(`Trade with *${target}* succesfull!\n\nTransferred ${client.util.formatNumber(amount)}💰 to *${target}*.\nYour current balance is ${client.util.formatNumber(balance)}💰`));
 
 }

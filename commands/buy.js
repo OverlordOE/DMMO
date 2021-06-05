@@ -2,85 +2,53 @@ const Discord = require('discord.js');
 module.exports = {
 	name: 'Buy',
 	summary: 'Buy an item from the shop',
-	description: 'With this you can buy an item from the shop.\nYou can either use `buy <item> <amount> to instantly buy the items or just use `buy`.\nIf you use the latter you will get prompted to enter the name and amount of the item that you want into the chat.',
+	description: 'With this you can buy an item from the shop.',
 	category: 'economy',
 	aliases: ['get'],
+	args: true,
 	usage: '<item> <amount>',
+	example: 'chest 2',
 
-	args: false,
-
-	execute(message, args, msgUser, client, logger) {
-
-		const filter = m => m.author.id === message.author.id;
-		let amount = 0;
+	async execute(message, args, msgUser, msgGuild, client, logger) {
+		let amount = 1;
 		let temp = '';
-		let item;
 
 		const embed = new Discord.MessageEmbed()
 			.setTitle('Project Neia Shop')
+			.setColor('#f3ab16')
 			.setThumbnail(message.author.displayAvatarURL());
 
-		message.channel.send(embed).then(sentMessage => {
+		const sentMessage = await message.channel.send(embed);
 
-			for (let i = 0; i < args.length; i++) {
-				if (!(isNaN(args[i]))) amount = parseInt(args[i]);
+		for (let i = 0; i < args.length; i++) {
+			if (!isNaN(parseInt(args[i]))) amount = parseInt(args[i]);
 
-				else if (temp.length > 2) temp += ` ${args[i]}`;
-				else temp += `${args[i]}`;
-			}
+			else if (temp.length > 2) temp += ` ${args[i]}`;
+			else temp += `${args[i]}`;
+		}
+		if (amount < 1) amount = 1;
 
-			item = client.util.getItem(temp);
-			if (item.buyable) buy(client, sentMessage, amount, embed, item, msgUser);
-			else if (item) sentMessage.edit(embed.setDescription('You can\'t buy this item?'));
+		const item = client.util.getItem(temp);
+		if (item.buyable) buyItem(amount);
+		
+		else if (item) return sentMessage.edit(embed.setDescription('You can\'t buy this item.').setColor('#fc0303'));
+		else if (temp) return sentMessage.edit(embed.setDescription(`__${temp}__ is not a valid item.`).setColor('#fc0303'));
+		else return sentMessage.edit(embed.setDescription('You didn\'t specify the item you want to use.').setColor('#fc0303'));
 
-			else {
-				sentMessage.edit(embed.setDescription('What item do you want to buy?'));
-				message.channel.awaitMessages(filter, { max: 1, time: 60000 })
+		function buyItem(buyAmount) {
+			let balance = msgUser.balance;
+			const cost = buyAmount * item.value;
+			if (cost > balance) return sentMessage.edit(embed.setDescription(`
+					__**ITEM(S) NOT BOUGHT!**__
+					You currently have ${client.util.formatNumber(balance)}💰 but __${client.util.formatNumber(buyAmount)}__ ${item.emoji}${item.name}(s) costs ${client.util.formatNumber(cost)}💰!
+					You need ${client.util.formatNumber(cost - balance)}💰 more.
+					`).setColor('#fc0303'));
 
-					.then(collected => {
-						item = client.util.getItem(collected.first().content);
+			client.userCommands.addItem(msgUser, item, buyAmount);
+			balance = client.userCommands.addBalance(msgUser, -cost);
 
-						if (item && !item.buyable) return sentMessage.edit(embed.setDescription('You can\'t buy this item?'));
-						else if (!item) return sentMessage.edit(embed.setDescription(`${collected.first().content} is not a valid item.`));
-						collected.first().delete();
+			sentMessage.edit(embed.setDescription(`You've bought: __${client.util.formatNumber(buyAmount)}__ ${item.emoji}__${item.name}(s)__.\n\nCurrent balance is ${client.util.formatNumber(balance)}💰.`).setColor('#00fc43'));
 
-						sentMessage.edit(embed.setDescription(`How many __${item.name}(s)__ do you want to buy?`)).then(() => {
-							message.channel.awaitMessages(filter, { max: 1, time: 60000 })
-
-								.then(collected => {
-									amount = parseInt(collected.first().content);
-									collected.first().delete();
-									buy(client, sentMessage, amount, embed, item, msgUser);
-								})
-								.catch(e => {
-									logger.error(e.stack);
-									throw Error('Something went wrong');
-								});
-						});
-					});
-			}
-		})
-			.catch(e => {
-				logger.error(e.stack);
-				throw Error('Something went wrong');
-			});
+		}
 	},
 };
-
-function buy(client, sentMessage, amount, embed, item, msgUser) {
-
-	if (!Number.isInteger(amount)) return sentMessage.edit(embed.setDescription(`${amount} is not a number`));
-	else if (amount < 1) amount = 1;
-
-	let balance = msgUser.balance;
-	const cost = amount * item.value;
-	if (cost > balance) return sentMessage.edit(embed.setDescription(`
-	You currently have ${client.util.formatNumber(balance)}💰 but __${client.util.formatNumber(amount)}__ ${item.emoji}${item.name}(s) costs ${client.util.formatNumber(cost)}💰!
-	You need ${client.util.formatNumber(cost - balance)}💰 more
-	`));
-
-	client.characterCommands.addItem(msgUser, item, amount);
-	balance = client.characterCommands.addMoney(msgUser, -cost);
-
-	sentMessage.edit(embed.setDescription(`You've bought: __${client.util.formatNumber(amount)}__ ${item.emoji}__${item.name}(s)__.\n\nCurrent balance is ${client.util.formatNumber(balance)}💰.`));
-}

@@ -11,7 +11,7 @@ module.exports = {
 	usage: '',
 
 
-	async execute(message, args, msgUser, client, logger) {
+	async execute(message, args, msgUser, msgGuild, client, logger) {
 
 
 		const embed = new Discord.MessageEmbed()

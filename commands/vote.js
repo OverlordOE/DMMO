@@ -9,7 +9,7 @@ module.exports = {
 
 	usage: '',
 
-	execute(message, args, msgUser, client, logger) {
+	execute(message, args, msgUser, msgGuild, client, logger) {
 		const vote = client.characterCommands.getVote(msgUser);
 		const embed = new Discord.MessageEmbed()
 			.setTitle('Vote for Project Neia!')

@@ -10,7 +10,7 @@ module.exports = {
 	usage: '<user>',
 
 
-	async execute(message, args, msgUser, client, logger) {
+	async execute(message, args, msgUser, msgGuild, client, logger) {
 		const filter = (reaction, user) => {
 			return user.id === message.author.id;
 		};

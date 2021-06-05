@@ -7,7 +7,7 @@ module.exports = {
 	usage: '<user> <field> <value>',
 
 
-	async execute(message, args, msgUser, client, logger) {
+	async execute(message, args, msgUser, msgGuild, client, logger) {
 		const target = await client.characterCommands.getUser(message.mentions.users.first().id);
 		try {
 

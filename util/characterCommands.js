@@ -420,12 +420,16 @@ Reflect.defineProperty(characterCommands, 'getItem', {
 
 
 // Misc
-Reflect.defineProperty(characterCommands, 'addMoney', {
-	value: function addMoney(user, amount) {
+Reflect.defineProperty(characterCommands, 'addBalance', {
+	value: function addBalance(user, amount, gambling = false) {
 		if (isNaN(amount)) throw Error(`${amount} is not a valid number.`);
 		user.balance += Number(amount);
 		if (amount > 0) user.totalEarned += Number(amount);
-
+		// if (amount > 0 && gambling) characterCommands.addStats(user, 'gamblingMoneyGained', Number(amount));
+		// else if (amount < 0 && gambling) {
+		// 	characterCommands.addStats(user, 'gamblingMoneyLost', -Number(amount));
+		// 	characterCommands.addStats(user, 'gamblingDone', 1);
+		// }
 		characterCommands.saveUser(user);
 		return Math.floor(user.balance);
 	},
@@ -470,7 +474,7 @@ Reflect.defineProperty(characterCommands, 'getDaily', {
 });
 Reflect.defineProperty(characterCommands, 'setDaily', {
 	value: function setDaily(user) {
-		user.lastDaily = moment().toString();
+		user.lastDaily = moment().toDate();
 		return characterCommands.saveUser(user);
 	},
 });
@@ -485,7 +489,7 @@ Reflect.defineProperty(characterCommands, 'getHourly', {
 });
 Reflect.defineProperty(characterCommands, 'setHourly', {
 	value: function setHourly(user) {
-		user.lastHourly = moment().toString();
+		user.lastHourly = moment().toDate();
 		return characterCommands.saveUser(user);
 	},
 });
@@ -493,7 +497,7 @@ Reflect.defineProperty(characterCommands, 'setHourly', {
 
 Reflect.defineProperty(characterCommands, 'setVote', {
 	value: function setVote(user) {
-		user.lastVote = moment().toString();
+		user.lastVote = moment().toDate();
 		return characterCommands.saveUser(user);
 	},
 });

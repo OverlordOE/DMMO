@@ -6,13 +6,13 @@ module.exports = {
 	usage: '<money> <target>',
 
 
-	async execute(message, args, msgUser, client, logger) {
+	async execute(message, args, msgUser, msgGuild, client, logger) {
 		const amount = args.find(arg => !/<@!?\d+>/g.test(arg));
 		const target = message.mentions.users.first() || message.author;
 		const targetUser = await client.characterCommands.getUser(target.id);
 
 		if (args[0] == 'all') {
-			client.characterCommands.map((user) => client.characterCommands.addMoney(user, args[1]));
+			client.characterCommands.map((user) => client.characterCommands.addBalance(user, args[1]));
 			return message.channel.send(`Added ${client.util.formatNumber(amount)} to every available user`);
 		}
 		else if (args[0] == 'item') {
@@ -24,7 +24,7 @@ module.exports = {
 
 		if (!amount || isNaN(amount)) return message.channel.send(`Sorry *${message.author}*, that's an invalid amount.`);
 
-		client.characterCommands.addMoney(targetUser, amount);
+		client.characterCommands.addBalance(targetUser, amount);
 		const balance = client.util.formatNumber(targetUser.balance);
 
 		if (amount <= 0) return message.channel.send(`Successfully removed ${client.util.formatNumber(amount * -1)}💰 from *${target}*. Their current balance is ${balance}💰`);

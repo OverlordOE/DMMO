@@ -12,7 +12,7 @@ module.exports = {
 	args: false,
 	usage: '',
 
-	execute(message, args, msgUser, client, logger) {
+	execute(message, args, msgUser, msgGuild, client, logger) {
 
 		const filter = m => m.author.id === message.author.id;
 		let amount = 1;
@@ -52,7 +52,7 @@ module.exports = {
 								const item = itemInfo[i.name.toLowerCase()];
 								const refundAmount = sellPercentage * item.value * i.amount;
 								client.characterCommands.removeItem(msgUser, item, i.amount);
-								balance = client.characterCommands.addMoney(msgUser, refundAmount);
+								balance = client.characterCommands.addBalance(msgUser, refundAmount);
 								totalReceived += refundAmount;
 							});
 							logger.debug(totalReceived);
@@ -112,7 +112,7 @@ function sell(client, sentMessage, amount, embed, item, msgUser) {
 		return sentMessage.edit(embed.setDescription(`You do not have ${amount} ${item.emoji}__${item.name}(s)__! Selling cancelled.`));
 	}
 
-	const balance = client.characterCommands.addMoney(msgUser, refundAmount);
+	const balance = client.characterCommands.addBalance(msgUser, refundAmount);
 
 	sentMessage.edit(embed.setDescription(`You've refunded ${amount} ${item.emoji}__${item.name}(s)__ and received ${client.util.formatNumber(refundAmount)}💰 back.\nYour balance is ${client.util.formatNumber(balance)}💰!`));
 }

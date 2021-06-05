@@ -8,7 +8,7 @@ module.exports = {
 	args: false,
 	usage: '<item>',
 
-	async execute(message, args, msgUser, client, logger) {
+	async execute(message, args, msgUser, msgGuild, client, logger) {
 		const filter = m => m.author.id === message.author.id;
 		let temp = '';
 		let item;

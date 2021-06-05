@@ -9,7 +9,7 @@ module.exports = {
 
 	usage: '',
 
-	async execute(message, args, msgUser, client, logger) {
+	async execute(message, args, msgUser, msgGuild, client, logger) {
 		const daily = client.characterCommands.getDaily(msgUser);
 		let chest;
 
@@ -32,7 +32,7 @@ module.exports = {
 				.setImage(`attachment://${chest.picture}`);
 
 			const income = await client.characterCommands.calculateIncome(msgUser);
-			client.characterCommands.addMoney(msgUser, income.daily);
+			client.characterCommands.addBalance(msgUser, income.daily);
 			client.characterCommands.addItem(msgUser, chest);
 			client.characterCommands.setDaily(msgUser);
 

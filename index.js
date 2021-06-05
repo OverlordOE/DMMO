@@ -67,7 +67,7 @@ for (const file of commandFiles) {
 
 // Startup Tasks
 
-client.login(process.env.TEST_TOKEN);
+client.login(process.env.TOKEN);
 client.on('ready', async () => {
 	try {
 		const storedUsers = await Users.findAll();
@@ -100,9 +100,8 @@ client.on('message', async message => {
 
 	if (message.author.bot || message.channel == 'dm') return;
 
-	let guild = guildCommands.get(message.guild.id);
-	if (!guild) guild = await guildCommands.newGuild(message.guild.id);
-	const prefix = await guildCommands.getPrefix(message.guild.id);
+	const guild = await guildCommands.getGuild(message.guild.id);
+	const prefix = guildCommands.getPrefix(guild);
 	const id = message.author.id;
 	const user = await characterCommands.getUser(id);
 
@@ -120,8 +119,8 @@ client.on('message', async message => {
 		|| client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 
 	if (!command) return;
-	if (command.category == 'debug' && (id != 137920111754346496 && id != 139030319784263681)) return message.channel.send('You are not the owner of this bot!');
-	else if (command.category == 'admin' && !message.member.hasPermission('ADMINISTRATOR') && id != 137920111754346496 && id != 139030319784263681) return message.channel.send('You need Admin privileges to use this command!');
+	if (command.category == 'debug' && (id != 137920111754346496)) return message.channel.send('You are not the owner of this bot!');
+	if (command.permissions) if (!message.guild.member(message.author).hasPermission(command.permissions)) return message.reply(`you need the ${command.permissions} permission to use this command!`);
 
 
 	// if the command is used wrongly correct the user
@@ -157,7 +156,7 @@ client.on('message', async message => {
 	}
 
 	if (user.firstCommand) {
-		client.commands.get('changelog').execute(message, args, user, client, logger);
+		client.commands.get('changelog').execute(message, args, user, guild, client, logger);
 		user.firstCommand = false;
 		logger.info(`New user ${message.author.tag}`);
 		client.characterCommands.saveUser(user);
@@ -173,7 +172,7 @@ client.on('message', async message => {
 	// Execute command
 	logger.log('info', `${message.author.tag} Called command: ${commandName} ${args.join(' ')}, in guild: ${message.guild.name}`);
 	try {
-		command.execute(message, args, user, client, logger);
+		command.execute(message, args, user, guild, client, logger);
 	}
 	catch (e) {
 		logger.error(e.stack);
@@ -190,8 +189,8 @@ client.on('message', async message => {
 
 
 
-// Regular tasks executed every 3 hours
-const botTasks = new cron.CronJob('0 0-23/3 * * *', () => {
+// Regular tasks executed every hour
+const botTasks = new cron.CronJob('0 * * * *', () => {
 	let memberTotal = 0;
 	client.guilds.cache.forEach(guild => { if (!isNaN(memberTotal) && guild.id != 264445053596991498) memberTotal += Number(guild.memberCount); });
 	client.user.setActivity(`with ${memberTotal} users.`);
@@ -241,7 +240,7 @@ dbl.webhook.on('vote', async vote => {
 	}
 
 	const income = await characterCommands.calculateIncome(user);
-	const balance = characterCommands.addMoney(user, income.daily);
+	const balance = characterCommands.addBalance(user, income.daily);
 	characterCommands.addItem(user, chest);
 	characterCommands.setVote(user);
 
