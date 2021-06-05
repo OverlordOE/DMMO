@@ -28,7 +28,7 @@ module.exports = {
 		if (gambleAmount < 1) gambleAmount = 1;
 		if (gambleAmount > msgUser.balance) return message.channel.send(embed.setDescription(`Sorry *${message.author}*, you only have ${client.util.formatNumber(msgUser.balance)}💰.`));
 
-		client.userCommands.addBalance(msgUser, -gambleAmount, true);
+		client.characterCommands.addBalance(msgUser, -gambleAmount, true);
 
 		const symbols = ['✊', '🧻', '✂️'];
 		const filter = (reaction, user) => {
@@ -48,14 +48,14 @@ module.exports = {
 				const userAnswer = symbols.indexOf(reaction.emoji.name);
 
 				if (userAnswer === botAnswer) {
-					const balance = client.userCommands.addBalance(msgUser, gambleAmount);
+					const balance = client.characterCommands.addBalance(msgUser, gambleAmount);
 					sentMessage.edit(embed.setDescription(`**Neia** chooses ${symbols[botAnswer]}. __**It's a tie!**__\nYour balance is ${client.util.formatNumber(balance)}💰`));
 				}
 				else if (botAnswer - userAnswer === 1 || botAnswer - userAnswer === -2) {
 					sentMessage.edit(embed.setDescription(`**Neia** chooses ${symbols[botAnswer]}. __**You lose!**__\nYour balance is ${client.util.formatNumber(msgUser.balance)}💰`).setColor('#fc0303'));
 				}
 				else if (userAnswer - botAnswer === 1 || userAnswer - botAnswer === -2) {
-					const balance = client.userCommands.addBalance(msgUser, winAmount, true);
+					const balance = client.characterCommands.addBalance(msgUser, winAmount, true);
 					sentMessage.edit(embed.setDescription(`**Neia** chooses ${symbols[botAnswer]}. __**You Win!**__\nYou won ${client.util.formatNumber(winAmount)}💰 and your balance is ${client.util.formatNumber(balance)}💰`).setColor('#00fc43'));
 				}
 				return sentMessage.reactions.removeAll();

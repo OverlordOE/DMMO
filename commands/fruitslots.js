@@ -43,7 +43,7 @@ module.exports = {
 		if (gambleAmount < 1) gambleAmount = 1;
 		if (gambleAmount > msgUser.balance) return message.channel.send(embed.setDescription(`Sorry *${message.author}*, you only have ${client.util.formatNumber(msgUser.balance)}💰.`));
 
-		client.userCommands.addBalance(msgUser, -gambleAmount, true);
+		client.characterCommands.addBalance(msgUser, -gambleAmount, true);
 
 		output += `
 		You have bet ${client.util.formatNumber(gambleAmount)}💰.
@@ -114,7 +114,7 @@ module.exports = {
 		function endGame() {
 			if (rowsWon >= 1) {
 				const winAmount = gambleAmount * payoutRate * rowsWon;
-				const balance = client.userCommands.addBalance(msgUser, winAmount, true);
+				const balance = client.characterCommands.addBalance(msgUser, winAmount, true);
 				output += `\n\n__**You won!**__ **${rowsWon}** row(s)!\nYou gained ${client.util.formatNumber(winAmount)}💰 and your balance is ${client.util.formatNumber(balance)}💰`;
 				embed.setColor('#00fc43');
 			}

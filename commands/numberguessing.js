@@ -31,7 +31,7 @@ module.exports = {
 		if (gambleAmount > msgUser.balance) return message.channel.send(embed.setDescription(`Sorry *${message.author}*, you only have ${client.util.formatNumber(msgUser.balance)}💰.`));
 		if (gambleAmount <= 0) return message.channel.send(embed.setDescription(`Please enter an amount **greater than zero**, *${message.author}*.`));
 
-		client.userCommands.addBalance(msgUser, -gambleAmount, true);
+		client.characterCommands.addBalance(msgUser, -gambleAmount, true);
 
 		const filter = (reaction, user) => {
 			return [client.emojiCharacters[1], client.emojiCharacters[2], client.emojiCharacters[3], client.emojiCharacters[4], client.emojiCharacters[5]]
@@ -49,7 +49,7 @@ module.exports = {
 				const reaction = collected.first();
 
 				if (reaction.emoji.name === client.emojiCharacters[answer]) {
-					const balance = client.userCommands.addBalance(msgUser, winAmount, true);
+					const balance = client.characterCommands.addBalance(msgUser, winAmount, true);
 					embed.setColor('#00fc43');
 					sentMessage.edit(embed.setDescription(`__You have chosen__ ${reaction.emoji.name}\nThe **correct answer** was ${client.emojiCharacters[answer]}.\n
 					__**You win**__ ${client.util.formatNumber(winAmount)}💰.\nYour current balance is ${client.util.formatNumber(balance)}💰`));
