@@ -9,8 +9,8 @@ module.exports = {
 
 	async execute(message, args, msgUser, msgGuild, client, logger) {
 		const target = await client.characterCommands.getUser(message.mentions.users.first().id);
+	
 		try {
-
 			if (args[1] == 'reset') {
 				const user = await client.characterCommands.getUser(target.id);
 				user.destroy();
@@ -18,7 +18,7 @@ module.exports = {
 				return message.reply('Reset succesfull');
 			}
 			target[args[1]] = Number(args[2]);
-			target.save();
+			await client.characterCommands.saveUser(target);
 		}
 		catch (e) {
 			message.reply('something went wrong');

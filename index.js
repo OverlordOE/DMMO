@@ -4,8 +4,6 @@ const winston = require('winston');
 const moment = require('moment');
 const cron = require('cron');
 const fs = require('fs');
-const DBL = require('dblapi.js');
-const dbl = new DBL(process.env.DBL_TOKEN, { webhookPort: 3000, webhookAuth: process.env.WEBHOOK_TOKEN });
 const { Users, characterCommands } = require('./util/characterCommands');
 const { guildCommands, Guilds } = require('./util/guildCommands');
 const { util } = require('./util/util');
@@ -198,51 +196,3 @@ const botTasks = new cron.CronJob('0 * * * *', () => {
 	logger.info('Finished regular tasks!');
 });
 botTasks.start();
-
-
-
-
-
-
-
-
-
-
-
-
-// DBL voting webhook handler
-dbl.webhook.on('ready', () => logger.info('DBL Webhook up and running.'));
-dbl.on('error', e => logger.error(`Oops! ${e}`));
-
-dbl.webhook.on('vote', async vote => {
-
-	const userID = vote.user;
-	const discordUser = client.users.cache.get(userID);
-	const user = await characterCommands.getUser(userID);
-	logger.info(`${discordUser.tag} has just voted.`);
-
-	const embed = new Discord.MessageEmbed()
-		.setTitle('Vote Reward')
-		.setThumbnail(discordUser.displayAvatarURL())
-		.setColor(characterCommands.getColour(user))
-		.setFooter('Project Neia', client.user.displayAvatarURL());
-
-	let chest;
-	const luck = Math.floor(Math.random() * 7);
-	if (luck == 0) chest = 'Epic chest';
-	if (luck == 1) chest = 'Mystery chest';
-	else chest = 'Rare chest';
-	chest = util.getItem(chest);
-
-	if (chest.picture) {
-		embed.attachFiles(`assets/items/${chest.picture}`)
-			.setImage(`attachment://${chest.picture}`);
-	}
-
-	const income = await characterCommands.calculateIncome(user);
-	const balance = characterCommands.addBalance(user, income.daily);
-	characterCommands.addItem(user, chest);
-	characterCommands.setVote(user);
-
-	return discordUser.send(embed.setDescription(`Thank you for voting!\n\nYou got a ${chest.emoji}${chest.name} from your vote 🎁 and ${util.formatNumber(income.daily)}💰 from your collectables.\nCome back in 12 hours for more!\n\nYour current balance is ${util.formatNumber(balance)}💰`));
-});
