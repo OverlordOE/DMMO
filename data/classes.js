@@ -49,7 +49,7 @@ module.exports = {
 			},
 		},
 		startSkills: ['slash', 'shield'],
-		startEquipment: ['training sword'],
+		startEquipment: ['training bow'],
 	},
 
 	wizard: {
