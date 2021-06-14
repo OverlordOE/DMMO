@@ -55,12 +55,12 @@ module.exports = {
 		function playRound() {
 			setTimeout(function () {
 
-				if (Math.random() * 100 <= target.stats.Attackspeed) resolveAttack(target, host);
+				if (Math.random() * 10 <= target.stats.Attackspeed) resolveAttack(target, host);
 				if (host.hp <= 0) {
 					endGame();
 					return setEmbed(sentMessage);
 				}
-				if (Math.random() * 100 <= host.stats.Attackspeed) resolveAttack(host, target);
+				if (Math.random() * 10 <= host.stats.Attackspeed) resolveAttack(host, target);
 
 
 				if (host.hp >= 1 && target.hp >= 1) playRound();
@@ -68,7 +68,7 @@ module.exports = {
 					endGame();
 					return setEmbed(sentMessage);
 				}
-			}, 50);
+			}, 500);
 		}
 
 
