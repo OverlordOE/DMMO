@@ -32,13 +32,13 @@ module.exports = {
 		// Put all necessary stats in an object for global use
 		const host = {
 			stats: hostStats,
-			equipment: client.characterCommands.getEquipment(msgUser),
+			equipment: msgUser.equipment,
 			hp: hostStats.maxHP,
 			user: message.author,
 		};
 		const target = {
 			stats: targetStats,
-			equipment: client.characterCommands.getEquipment(targetUser),
+			equipment: targetUser.equipment,
 			hp: targetStats.maxHP,
 			user: targetDiscord,
 		};

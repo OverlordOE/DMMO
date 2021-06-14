@@ -26,6 +26,23 @@ Reflect.defineProperty(characterCommands, 'newUser', {
 		return user;
 	},
 });
+Reflect.defineProperty(characterCommands, 'deleteUser', {
+	value: async function deleteUser(id) {
+		try {
+			const user = await Users.findOne({
+				where: { user_id: id },
+			});
+			user.destroy();
+			characterCommands.delete(id);
+			return true;
+		}
+		catch (error) {
+			console.warn('could not delete user');
+			console.log(error);
+			return false;
+		}
+	},
+});
 
 
 Reflect.defineProperty(characterCommands, 'getUser', {
@@ -72,13 +89,6 @@ Reflect.defineProperty(characterCommands, 'saveUser', {
 
 
 // EQUIPMENT AND COMBAT
-
-Reflect.defineProperty(characterCommands, 'getEquipment', {
-	value: function getEquipment(user) {
-		return JSON.parse(user.equipment);
-	},
-});
-
 Reflect.defineProperty(characterCommands, 'equip', {
 	value: async function equip(user, equipment) {
 
@@ -87,10 +97,10 @@ Reflect.defineProperty(characterCommands, 'equip', {
 		});
 
 		if (userEquipment) {
-			const equipped = JSON.parse(user.equipment);
+			const equipped = user.equipment;
 
 			equipped[equipment.slot] = equipment.name;
-			user.equipment = JSON.stringify(equipped);
+			user.equipment = equipped;
 			return characterCommands.saveUser(user);
 		}
 		throw Error(`${equipment} is not a valid item`);
@@ -143,8 +153,8 @@ Reflect.defineProperty(characterCommands, 'setClass', {
 	value: async function setClass(user, newClass) {
 
 		user.class = newClass.name;
-		user.baseStats = JSON.stringify(newClass.stats.base);
-		user.equipment = JSON.stringify({
+		user.baseStats = newClass.stats.base;
+		user.equipment = {
 			'Main hand': null,
 			'Off hand': null,
 			'Head': null,
@@ -156,9 +166,9 @@ Reflect.defineProperty(characterCommands, 'setClass', {
 			// 'Feet': null,
 			// 'Ring': null,
 			// 'Trinket': null,
-		});
+		};
 
-		// user.skills = JSON.stringify(c.startSkills);
+		// user.skills = c.startSkills;
 		// for (let i = 0; i < c.startSkills.length; i++) {
 		// 	const skill = characterCommands.getSkill(c.startSkills[i]);
 		// 	await characterCommands.addSkill(id, skill);
@@ -181,33 +191,35 @@ Reflect.defineProperty(characterCommands, 'setClass', {
 Reflect.defineProperty(characterCommands, 'getBaseStats', {
 	value: function getBaseStats(user) {
 		if (!user.class) return null;
-		return JSON.parse(user.baseStats);
+		return user.baseStats;
 	},
 });
 Reflect.defineProperty(characterCommands, 'getStats', {
 	value: function getStats(user) {
 		if (!user.class) return null;
-		return JSON.parse(user.stats);
+		return user.stats;
 	},
 });
 Reflect.defineProperty(characterCommands, 'calculateStats', {
 	value: async function calculateStats(user) {
 		if (!user.class) return false;
 
-		const stats = JSON.parse(user.baseStats);
+		const stats = user.baseStats;
 		stats.Critchance = 0;
 		stats.Armor = 0;
 		stats.Damage = 0;
 		stats.Attackspeed = 0;
 
-		const equipment = await characterCommands.getEquipment(user);
+		const equipment = user.equipment;
 		for (const slot in equipment) {
 			if (equipment[slot]) {
 				const item = util.getItem(equipment[slot]);
 
-				if (item.stats)
-					for (const itemEffect in item.stats)
+				if (item.stats) {
+					for (const itemEffect in item.stats) {
 						stats[itemEffect] += item.stats[itemEffect];
+					}
+				}
 			}
 		}
 
@@ -216,7 +228,7 @@ Reflect.defineProperty(characterCommands, 'calculateStats', {
 		stats.Armor += Math.round(stats.Dexterity * 1.5);
 		stats.Critchance += stats.Dexterity / 8;
 
-		user.stats = JSON.stringify(stats);
+		user.stats = stats;
 		characterCommands.saveUser(user);
 		return stats;
 	},
@@ -256,7 +268,7 @@ Reflect.defineProperty(characterCommands, 'levelInfo', {
 				};
 			}
 			const statGrowth = classInfo.stats.growth;
-			const stats = JSON.parse(user.baseStats);
+			const stats = user.baseStats;
 
 			user.level++;
 			user.exp -= expNeeded;
@@ -269,7 +281,7 @@ Reflect.defineProperty(characterCommands, 'levelInfo', {
 			stats.Dexterity += statGrowth.Dexterity;
 			stats.Constitution += statGrowth.Constitution;
 			stats.Intelligence += statGrowth.Intelligence;
-			user.baseStats = JSON.stringify(stats);
+			user.baseStats = stats;
 			characterCommands.saveUser(user);
 
 			message.reply(`you have leveled up to level ${user.level}.
@@ -348,9 +360,9 @@ Reflect.defineProperty(characterCommands, 'removeItem', {
 		if (userItem.amount >= removeAmount) {
 			user.networth -= item.value * removeAmount;
 			if (item.ctg == 'equipment' && userItem.amount - removeAmount == 0) {
-				const equipment = JSON.parse(user.equipment);
+				const equipment = user.equipment;
 				if (equipment[item.slot] == item.name) equipment[item.slot] = null;
-				user.equipment = JSON.stringify(equipment);
+				user.equipment = equipment;
 			}
 
 			if (userItem.amount == removeAmount) userItem.destroy();
@@ -378,13 +390,6 @@ Reflect.defineProperty(characterCommands, 'getInventory', {
 		return UserItems.findAll({
 			where: { user_id: user.user_id },
 		});
-	},
-});
-Reflect.defineProperty(characterCommands, 'getItem', {
-	value: function getItem(itemName) {
-		const item = itemName.toLowerCase();
-		if (items[item]) return items[item];
-		return false;
 	},
 });
 
@@ -421,15 +426,10 @@ Reflect.defineProperty(characterCommands, 'getItem', {
 
 // Misc
 Reflect.defineProperty(characterCommands, 'addBalance', {
-	value: function addBalance(user, amount, gambling = false) {
-		if (isNaN(amount)) throw Error(`${amount} is not a valid number.`);
+	value: function addBalance(user, amount) {
 		user.balance += Number(amount);
 		if (amount > 0) user.totalEarned += Number(amount);
-		// if (amount > 0 && gambling) characterCommands.addStats(user, 'gamblingMoneyGained', Number(amount));
-		// else if (amount < 0 && gambling) {
-		// 	characterCommands.addStats(user, 'gamblingMoneyLost', -Number(amount));
-		// 	characterCommands.addStats(user, 'gamblingDone', 1);
-		// }
+
 		characterCommands.saveUser(user);
 		return Math.floor(user.balance);
 	},

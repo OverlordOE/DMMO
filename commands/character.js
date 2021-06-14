@@ -10,7 +10,7 @@ module.exports = {
 	usage: '<user>',
 
 
-	async execute(message, args, msgUser, msgGuild, client, logger) {
+	async execute(message, args, msgUser, msgGuild, client) {
 		const filter = (reaction, user) => {
 			return user.id === message.author.id;
 		};
@@ -27,22 +27,16 @@ module.exports = {
 		let vote = client.characterCommands.getVote(userProfile);
 
 		const levelInfo = await client.characterCommands.levelInfo(userProfile, message);
-		let exp = `${levelInfo.exp}/${levelInfo.expNeeded}`;
+		const exp = `${levelInfo.exp}/${levelInfo.expNeeded}`;
 
 
 		let userClass = null;
 		if (userProfile.class) userClass = client.characterCommands.getClass(userProfile.class);
 
 		let className;
-		let colour;
-		if (userClass) {
-			className = userClass.name;
-			colour = userClass.colour;
-		}
-		else {
-			className = 'No class';
-			colour = '#ffffff';
-		}
+		if (userClass) className = userClass.name;
+		else className = 'No class';
+
 
 		if (daily === true) daily = 'now';
 		if (hourly === true) hourly = 'now';
@@ -75,7 +69,7 @@ module.exports = {
 
 			.setTitle(`**${target.tag}'s Equipment**`)
 			.setThumbnail(avatar)
-			.setColor(colour)
+			.setColor(pColour)
 			.setTimestamp()
 			.setFooter('You can use the emojis to switch pages.', client.user.displayAvatarURL());
 
@@ -105,18 +99,18 @@ module.exports = {
 			let statDescription = `**Class:** ${className} ${levelInfo.level}\n**Exp:** ${exp}\n`;
 			for (const stat in stats) {
 				if (baseStats[stat]) {
-					if (stat == 'maxHP') statDescription += `\n**Max HP**: ${stats[stat]} (${stats[stat] - baseStats[stat]})<:health:730849477765890130>`;
-					else if (stat == 'maxMP') statDescription += `\n**Max MP**: ${stats[stat]} (${stats[stat] - baseStats[stat]})<:mana:730849477640061029>`;
+					if (stat == 'maxHP') statDescription += `\n**Max HP**: __${stats[stat]}__ (${stats[stat] - baseStats[stat]})<:health:730849477765890130>`;
+					else if (stat == 'maxMP') statDescription += `\n**Max MP**: __${stats[stat]}__ (${stats[stat] - baseStats[stat]})<:mana:730849477640061029>`;
 
-					else statDescription += `\n**${stat}**: ${stats[stat]} (${stats[stat] - baseStats[stat]})`;
+					else statDescription += `\n**${stat}**: __${stats[stat]}__ (${stats[stat] - baseStats[stat]})`;
 				}
-				else if (stat == 'Critchance') statDescription += `\n**Crit Chance**: ${Math.fround(stats[stat])}`;
-				else statDescription += `\n**${stat}**: ${stats[stat]}`;
+				else if (stat == 'Critchance') statDescription += `\n**Crit Chance**: __${Math.fround(stats[stat])}__`;
+				else statDescription += `\n**${stat}**: __${stats[stat]}__`;
 			}
 			characterEmbed.setDescription(statDescription);
 
 			// Print equipment
-			const equipment = await client.characterCommands.getEquipment(userProfile);
+			const equipment = userProfile.equipment;
 			let equipmentDescription = '';
 			for (const slot in equipment) {
 				if (equipment[slot]) {
