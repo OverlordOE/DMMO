@@ -32,8 +32,7 @@ module.exports = {
 		topApi.hasVoted(message.author.id).then(async voted => {
 			if (voted) {
 				if (vote === true) {
-					if (chest.picture) embed.attachFiles(`assets/items/${chest.picture}`)
-						.setImage(`attachment://${chest.picture}`);
+					client.util.addPicture(embed, chest);
 
 					const income = await client.characterCommands.calculateIncome(msgUser);
 					client.characterCommands.addBalance(msgUser, income.daily);

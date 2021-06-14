@@ -26,7 +26,7 @@ module.exports = {
 		}
 
 		item = client.util.getItem(temp);
-		if (item) embed.attachFiles(`assets/items/${item.picture}`);
+		if (item) client.util.addPicture(embed, item);
 
 		message.channel.send(embed).then(async sentMessage => {
 			if (item) {

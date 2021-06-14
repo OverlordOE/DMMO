@@ -33,8 +33,7 @@ module.exports = {
 				.attachFiles(`assets/rarity/${item.rarity}.jpg`)
 				.setThumbnail(`attachment://${item.rarity}.jpg`);
 
-			if (item.picture) embed.attachFiles(`assets/items/${item.picture}`)
-				.setImage(`attachment://${item.picture}`);
+			client.util.addPicture(embed, item);
 
 			if (item.rarity == 'uncommon') embed.setColor('#1eff00');
 			else if (item.rarity == 'rare') embed.setColor('#0070dd');

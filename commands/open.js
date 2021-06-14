@@ -51,9 +51,8 @@ module.exports = {
 					client.characterCommands.addItem(msgUser, lootItem, lootlist[loot]);
 				}
 
-				lootEmbed.setDescription(description)
-					.attachFiles(`assets/items/${chest}_open.png`)
-					.setThumbnail(`attachment://${chest}_open.png`);
+				lootEmbed.setDescription(description);
+				client.util.addPicture(lootEmbed, chest, true);
 
 				message.channel.send(lootEmbed);
 				client.characterCommands.removeItem(msgUser, item, amount);
@@ -70,8 +69,7 @@ module.exports = {
 
 				lootEmbed.setTitle(`${chest} Chest`)
 					.setDescription(`${message.author} has discovered **${itemAmount}** **__${lootItem.emoji}${lootItem.name}__**.`)
-					.attachFiles(`assets/items/${chest}_open.png`)
-					.setThumbnail(`attachment://${chest}_open.png`);
+				client.util.addPicture(lootEmbed, chest, true);
 
 				if (lootItem.rarity == 'uncommon') lootEmbed.setColor('#1eff00');
 				else if (lootItem.rarity == 'rare') lootEmbed.setColor('#0070dd');
@@ -79,8 +77,7 @@ module.exports = {
 				else if (lootItem.rarity == 'legendary') lootEmbed.setColor('#ff8000');
 				else lootEmbed.setColor('#eeeeee');
 
-				if (lootItem.picture) lootEmbed.attachFiles(`assets/items/${lootItem.picture}`)
-					.setImage(`attachment://${lootItem.picture}`);
+				client.util.addPicture(lootEmbed, lootItem);
 
 				message.channel.send(lootEmbed);
 				client.characterCommands.addItem(msgUser, lootItem, itemAmount);

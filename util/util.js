@@ -30,4 +30,16 @@ Reflect.defineProperty(util, 'getItem', {
 	},
 });
 
+
+Reflect.defineProperty(util, 'addPicture', {
+	value: function addPicture(embed, item, thumbnail = false) {
+		if (item.picture) {
+			embed.attachFiles(`assets/items/${item.picture}`);
+			
+			if (thumbnail) embed.setThumbnail(`attachment://${item.picture}`);
+			else embed.setImage(`attachment://${item.picture}`);
+		}
+	},
+});
+
 module.exports = { util };
