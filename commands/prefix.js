@@ -11,10 +11,10 @@ module.exports = {
 
 		if (args[0]) {
 			const newPrefix = args[0];
-			client.guildCommands.setPrefix(id, newPrefix);
+			client.guildCommands.setPrefix(msgGuild, newPrefix);
 			return message.channel.send(`Changed the prefix for this server too: ${newPrefix}`);
 		}
-		const prefix = await client.guildCommands.getPrefix(id);
+		const prefix = client.guildCommands.getPrefix(msgGuild);
 		return message.channel.send(`The prefix for this server is: ${prefix}`);
 	},
 };
