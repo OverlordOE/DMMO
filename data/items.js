@@ -246,10 +246,29 @@ module.exports = {
 		ctg: 'equipment',
 		slot: 'Main hand',
 		stats: {
-			Damage: 6,
+			Damage: 15,
 			Attackspeed: 1,
+			Strength: 3,
 		},
 		description: 'Your basic training sword.',
+	},
+
+	'training bow': {
+		name: 'Training Bow',
+		value: 2500,
+		buyable: true,
+		emoji: '<:trainingBow:853989861719015444>',
+		rarity: 'common',
+		picture: 'trainingBow.png',
+		ctg: 'equipment',
+		slot: 'Main hand',
+		stats: {
+			Damage: 13,
+			Attackspeed: 1.2,
+			Strength: 1,
+			Dexterity: 2,
+		},
+		description: 'Your basic training bow.',
 	},
 
 	'training staff': {
@@ -262,8 +281,9 @@ module.exports = {
 		ctg: 'equipment',
 		slot: 'Main hand',
 		stats: {
-			Damage: 45,
+			Damage: 10,
 			Attackspeed: 1.5,
+			Intelligence: 3,
 		},
 		description: 'Your basic training staff.',
 	},
