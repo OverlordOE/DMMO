@@ -8,14 +8,15 @@ module.exports = {
 
 
 	async execute(message, args, msgUser, msgGuild, client, logger) {
-		const target = await client.characterCommands.getUser(message.mentions.users.first().id);
+		const id = message.mentions.users.first().id;
+		const target = await client.characterCommands.getUser(id);
 	
 		try {
 			if (args[1] == 'reset') {
-				const user = await client.characterCommands.getUser(target.id);
-				user.destroy();
-				client.characterCommands.delete(target.id);
-				return message.reply('Reset succesfull');
+			
+				const succes = await client.characterCommands.deleteUser(id);
+				if (succes) return message.reply('Reset succesfull.');
+				else return message.reply('Reset not succesfull!');
 			}
 			target[args[1]] = Number(args[2]);
 			await client.characterCommands.saveUser(target);
