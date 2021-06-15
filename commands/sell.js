@@ -12,7 +12,7 @@ module.exports = {
 	usage: '<item> <amount>',
 	example: 'chest 2',
 
-	async execute(message, args, msgUser, msgGuild, client, logger) {
+	async execute(message, args, msgUser, msgGuild, client) {
 		let amount = 1;
 		let temp = '';
 

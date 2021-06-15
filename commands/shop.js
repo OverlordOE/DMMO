@@ -30,7 +30,6 @@ module.exports = {
 			.setThumbnail(client.user.displayAvatarURL())
 			.setDescription(description)
 			.setColor(client.characterCommands.getColour(msgUser))
-
 			.setFooter('Use the items command to see the full item list.', client.user.displayAvatarURL());
 
 		return message.channel.send(embed);
