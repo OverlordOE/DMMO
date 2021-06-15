@@ -1,133 +1,80 @@
-/* eslint-disable no-shadow */
-/* eslint-disable max-nested-callbacks */
 const Discord = require('discord.js');
 module.exports = {
 	name: 'Trade',
-	summary: 'Trade money or items to other people',
-	description: 'Trade money and items to other people.',
+	summary: 'Trade money to other people',
+	description: 'Trade money to other people.',
 	aliases: ['give', 'donate', 'transfer'],
 	category: 'economy',
-	args: false,
-	usage: '',
+	args: true,
+	usage: '<target> <amount>',
+	example: '@overlordOE 25',
 
-	execute(message, args, msgUser, msgGuild, client) {
+	async execute(message, args, msgUser, msgGuild, client) {
 
-		const filter = m => m.author.id === msgUser;
 		const embed = new Discord.MessageEmbed()
 			.setTitle('Project Neia Trading Center')
-			.setColor(client.characterCommands.getColour(msgUser))
-			.setFooter('You can only trade to people on the same server.', client.user.displayAvatarURL());
+			.setFooter('You can only trade to people on the same server.', client.user.displayAvatarURL())
+			.setColor('#f3ab16');
+
+		let target;
+		let targetUser;
+		let amount = 1;
+		let temp = '';
+
+		for (let i = 0; i < args.length; i++) {
+			if (!isNaN(parseInt(args[i]))) amount = parseInt(args[i]);
+
+			else if (args[i].startsWith('<@') && args[i].endsWith('>')) {
+				let mention = args[i].slice(2, -1);
+				if (mention.startsWith('!')) mention = mention.slice(1);
+
+				target = client.users.cache.get(mention);
+				targetUser = await client.userCommands.getUser(target.id);
+				embed.setThumbnail(target.displayAvatarURL({ dynamic: true }));
+			}
+
+			else if (temp.length > 2) temp += ` ${args[i]}`;
+			else temp += `${args[i]}`;
+		}
+		if (amount < 1) amount = 1;
+
+		const item = client.util.getItem(temp);
+		if (target && item) itemTrade();
+		else if (target) moneyTrade();
+		else if (amount > 1) return message.channel.send(embed.setDescription('You didn\'t specify a target.').setColor('#fc0303'));
+		else return message.channel.send(embed.setDescription('Please specify who you want to trade with and what you want to trade.').setColor('#fc0303'));
 
 
-		message.channel.send(embed)
-			.then(async sentMessage => {
-				let target;
-				let amount = 0;
-				let temp = '';
+		function moneyTrade() {
+			let balance = msgUser.balance;
+			if (amount > balance) {
+				return message.channel.send(embed.setDescription(`__**MONEY NOT TRADED!**__
+					You only have ${client.util.formatNumber(balance)}💰 but need ${client.util.formatNumber(amount)}.`)
+					.setColor('#fc0303'));
+			}
 
-				for (let i = 0; i < args.length; i++) {
-					if (!(isNaN(args[i]))) amount = parseInt(args[i]);
+			balance = client.userCommands.addBalance(msgUser, -amount);
+			client.userCommands.addBalance(targetUser, amount);
+			return message.channel.send(embed.setDescription(
+				`Trade with *${target}* succesfull!\n\nTransferred ${client.util.formatNumber(amount)}💰 to *${target}*.
+				Your current balance is ${client.util.formatNumber(balance)}💰`)
+				.setColor('#00fc43'));
+		}
 
-					else if (args[i].startsWith('<@') && args[i].endsWith('>')) {
-						let mention = args[i].slice(2, -1);
-						if (mention.startsWith('!')) mention = mention.slice(1);
-						target = client.users.cache.get(mention);
-						embed.setThumbnail(target.displayAvatarURL());
-					}
+		async function itemTrade() {
+			if (!await client.userCommands.hasItem(msgUser, item, amount)) {
+				return message.channel.send(embed.setDescription(`__**ITEM(S) NOT TRADED!**__
+					You don't have enough **${item.name}**.`)
+					.setColor('#fc0303'));
+			}
 
-					else if (temp.length > 2) { temp += ` ${args[i]}`; }
-					else { temp += `${args[i]}`; }
-				}
+			client.userCommands.addItem(await client.userCommands.getUser(target.id), item, amount);
+			client.userCommands.removeItem(msgUser, item, amount);
+			message.channel.send(embed.setDescription(`Trade with *${target}* succesfull!
+			\nTraded ${amount} ${item.emoji}__${item.name}__ to *${target}*.`)
+				.setColor('#00fc43'));
+		}
 
-				const item = client.util.getItem(temp);
-				if (target && item) { itemTrade(client, target, amount, item, sentMessage, embed, msgUser); }
-				else if (target && amount > 1) { moneyTrade(client, target, amount, sentMessage, embed, msgUser); }
-				else {
-					sentMessage.edit(embed.setDescription('Who do you want to trade with? __mention the user__\n'));
-					message.channel.awaitMessages(filter, { max: 1, time: 60000 })
-
-						.then(async collected => {
-							let mention = collected.first().content;
-							collected.first().delete();
-
-							if (mention.startsWith('<@') && mention.endsWith('>')) {
-								mention = mention.slice(2, -1);
-								if (mention.startsWith('!')) mention = mention.slice(1);
-								target = client.users.cache.get(mention);
-								embed.setThumbnail(target.displayAvatarURL());
-							}
-							else { return sentMessage.edit(embed.setDescription(`${mention} is not a valid response`)); }
-
-
-							sentMessage.edit(embed.setDescription(`Trading with *${target}*\n\nWhat do you want to send (answer with a number to send money)?`))
-								.then(() => {
-									message.channel.awaitMessages(filter, { max: 1, time: 60000 })
-
-										.then(collected => {
-											const goods = collected.first().content.toLowerCase();
-											collected.first().delete();
-
-											// item trade
-											if (isNaN(goods)) {
-
-												const item = client.util.getItem(goods);
-												if (!item) return sentMessage.edit(embed.setDescription(`${item} doesn't exist.`));
-
-												// item trade
-												sentMessage.edit(embed.setDescription(`Trading with *${target}*\n\nHow much __${item.name}(s)__ do you want to send?`)).then(() => {
-													message.channel.awaitMessages(filter, { max: 1, time: 60000 })
-
-														.then(async collected => {
-															const amount = collected.first().content;
-															collected.first().delete();
-
-															if (await client.characterCommands.hasItem(msgUser, item, amount)) itemTrade(client, target, amount, item, sentMessage, embed, msgUser);
-															else return sentMessage.edit(embed.setDescription(`You don't have enough __${item.name}(s)__!`));
-														})
-														.catch(e => {
-															client.logger.error(e.stack);
-															message.reply('you didn\'t answer in time.');
-														});
-												});
-											}
-											else { moneyTrade(client, target, amount, sentMessage, embed, msgUser); }
-										})
-										.catch(e => {
-											client.logger.error(e.stack);
-											message.reply('you didn\'t answer in time.');
-										});
-								})
-								.catch(e => {
-									client.logger.error(e.stack);
-									message.reply('you didn\'t answer in time.');
-								});
-						});
-				}
-			});
 	},
 };
 
-async function itemTrade(client, target, amount, item, sentMessage, embed, msgUser) {
-	if (!Number.isInteger(amount)) return sentMessage.edit(embed.setDescription(`${amount} is not a number`));
-	else if (amount < 1) amount = 1;
-
-	client.characterCommands.addItem(await client.characterCommands.getUser(target.id), item, amount);
-	client.characterCommands.removeItem(msgUser, item, amount);
-	sentMessage.edit(embed.setDescription(`Trade with *${target}* succesfull!\n\nTraded ${amount} ${item.emoji}__${item.name}__ to *${target}*.`));
-}
-
-async function moneyTrade(client, target, amount, sentMessage, embed, msgUser) {
-	if (!Number.isInteger(amount)) return sentMessage.edit(embed.setDescription(`${amount} is not a number`));
-	else if (amount < 1) amount = 1;
-
-	let balance = msgUser.balance;
-
-	if (!amount || isNaN(amount)) return sentMessage.edit(embed.setDescription(`${amount} is an invalid amount.`));
-	if (amount > balance) return sentMessage.edit(embed.setDescription(`You only have ${client.util.formatNumber(balance)}💰 but need ${client.util.formatNumber(amount)}.`));
-	if (amount <= 0) return sentMessage.edit(embed.setDescription('Please enter an amount greater than zero.'));
-
-	client.characterCommands.addBalance(msgUser, -amount);
-	balance = client.characterCommands.addBalance(await client.characterCommands.getUser(target.id), amount);
-	return sentMessage.edit(embed.setDescription(`Trade with *${target}* succesfull!\n\nTransferred ${client.util.formatNumber(amount)}💰 to *${target}*.\nYour current balance is ${client.util.formatNumber(balance)}💰`));
-
-}

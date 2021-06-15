@@ -11,7 +11,7 @@ module.exports = {
 	usage: '',
 
 
-	async execute(message, args, msgUser, msgGuild, client, logger) {
+	async execute(message, args, msgUser, msgGuild, client) {
 
 
 		const embed = new Discord.MessageEmbed()
@@ -26,44 +26,45 @@ module.exports = {
 				return [emojicharacters[1], emojicharacters[2], emojicharacters[3], '✅'].includes(reaction.emoji.name) && user.id === message.author.id;
 			};
 
-			message.channel.send(embed)
-				.then(sentMessage => {
-					setClass(curClass, sentMessage, embed);
-					for (let i = 1; i < 4; i++) sentMessage.react(emojicharacters[i]);
-					sentMessage.react('✅');
+			const sentMessage = await message.channel.send(embed);
 
-					const collector = sentMessage.createReactionCollector(filter, { time: 180000 });
+			setClass(curClass, sentMessage, embed);
+			for (let i = 1; i < 4; i++) sentMessage.react(emojicharacters[i]);
+			sentMessage.react('✅');
 
-					collector.on('collect', (reaction) => {
-						reaction.users.remove(message.author.id);
+			const collector = sentMessage.createReactionCollector(filter, { time: 180000 });
 
-						switch (reaction.emoji.name) {
-							case emojicharacters[1]:
-								curClass = classes.warrior;
-								break;
+			collector.on('collect', (reaction) => {
+				reaction.users.remove(message.author.id);
 
-							case emojicharacters[2]:
-								curClass = classes.ranger;
-								break;
+				switch (reaction.emoji.name) {
+					case emojicharacters[1]:
+						curClass = classes.warrior;
+						break;
 
-							case emojicharacters[3]:
-								curClass = classes.wizard;
-								break;
+					case emojicharacters[2]:
+						curClass = classes.ranger;
+						break;
 
-							case '✅':
-								try {
-									client.characterCommands.setClass(msgUser, curClass);
-								}
-								catch (error) {
-									return sentMessage.edit(embed.setColor(curClass.colour).setDescription('Something went wrong'));
-								}
-								sentMessage.edit(embed.setColor(curClass.colour).setDescription(`You have chosen the class ${curClass.name}`));
-								return sentMessage.reactions.removeAll();
+					case emojicharacters[3]:
+						curClass = classes.wizard;
+						break;
+
+					case '✅':
+						try {
+							client.characterCommands.setClass(msgUser, curClass);
 						}
-						setClass(curClass, sentMessage, embed);
-					});
-					collector.on('end', () => sentMessage.reactions.removeAll());
-				});
+						catch (error) {
+							return sentMessage.edit(embed.setDescription('Something went wrong'));
+						}
+						sentMessage.edit(embed.setColor(curClass.colour).setDescription(`You have chosen the class ${curClass.name}`));
+						return sentMessage.reactions.removeAll();
+				}
+
+				setClass(curClass, sentMessage, embed);
+			});
+			collector.on('end', () => sentMessage.reactions.removeAll());
+
 		}
 		else {
 			const filter = (reaction, user) => {
