@@ -6,7 +6,7 @@ module.exports = {
 	args: false,
 	usage: '',
 
-	async execute(message, args, msgUser, msgGuild, client, logger) {
+	async execute(message, args, msgUser, msgGuild, client) {
 		try {
 			client.characterCommands.map(async (u) => {
 				const user = await client.characterCommands.getUser(u.user_id);
@@ -14,7 +14,7 @@ module.exports = {
 				client.characterCommands.saveUser(user);
 			});
 		} catch (error) {
-			return logger.error(error.stack);
+			return client.logger.error(error.stack);
 		}
 	},
 };

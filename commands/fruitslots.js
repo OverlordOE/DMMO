@@ -9,7 +9,7 @@ module.exports = {
 	usage: '<gamble amount>',
 	example: '100',
 
-	async execute(message, args, msgUser, msgGuild, client, logger) {
+	async execute(message, args, msgUser, msgGuild, client) {
 		/* 
 		Profitability formula: y(1) = x*a*c / b^3
 		y = avarage profit per spin in decimal percentage

@@ -9,7 +9,7 @@ module.exports = {
 	args: false,
 	usage: '',
 
-	execute(message, args, msgUser, msgGuild, client, logger) {
+	execute(message, args, msgUser, msgGuild, client) {
 
 		let collectables = '__**Collectables:**__\n';
 		let chests = '__**Chests:**__\n';

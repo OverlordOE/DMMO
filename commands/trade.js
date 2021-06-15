@@ -10,7 +10,7 @@ module.exports = {
 	args: false,
 	usage: '',
 
-	execute(message, args, msgUser, msgGuild, client, logger) {
+	execute(message, args, msgUser, msgGuild, client) {
 
 		const filter = m => m.author.id === msgUser;
 		const embed = new Discord.MessageEmbed()
@@ -85,7 +85,7 @@ module.exports = {
 															else return sentMessage.edit(embed.setDescription(`You don't have enough __${item.name}(s)__!`));
 														})
 														.catch(e => {
-															logger.error(e.stack);
+															client.logger.error(e.stack);
 															message.reply('you didn\'t answer in time.');
 														});
 												});
@@ -93,12 +93,12 @@ module.exports = {
 											else { moneyTrade(client, target, amount, sentMessage, embed, msgUser); }
 										})
 										.catch(e => {
-											logger.error(e.stack);
+											client.logger.error(e.stack);
 											message.reply('you didn\'t answer in time.');
 										});
 								})
 								.catch(e => {
-									logger.error(e.stack);
+									client.logger.error(e.stack);
 									message.reply('you didn\'t answer in time.');
 								});
 						});

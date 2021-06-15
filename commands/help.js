@@ -1,13 +1,14 @@
 const Discord = require('discord.js');
 module.exports = {
 	name: 'Help',
+	summary: 'This command',
 	description: 'List all the commands or get info about a specific command.',
-	category: 'help',
+	category: 'info',
 	aliases: ['commands'],
 	usage: '<command name>',
+	example: 'avatar',
 	args: false,
-
-	execute(message, args, msgUser, msgGuild, client, logger) {
+	execute(message, args, msgUser, msgGuild, client) {
 		const { commands } = message.client;
 		let adminCommands = '';
 		let musicCommands = '';

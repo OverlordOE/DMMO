@@ -9,7 +9,7 @@ module.exports = {
 	usage: '<gamble amount>',
 	example: '100',
 
-	async execute(message, args, msgUser, msgGuild, client, logger) {
+	async execute(message, args, msgUser, msgGuild, client) {
 		let gambleAmount = 0;
 		const payoutRate = 5;
 

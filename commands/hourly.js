@@ -9,7 +9,7 @@ module.exports = {
 
 	category: 'economy',
 
-	async execute(message, args, msgUser, msgGuild, client, logger) {
+	async execute(message, args, msgUser, msgGuild, client) {
 		const hourly = client.characterCommands.getHourly(msgUser);
 		let chest;
 

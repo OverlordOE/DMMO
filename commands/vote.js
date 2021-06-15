@@ -11,7 +11,7 @@ module.exports = {
 	cooldown: 5,
 	usage: '',
 
-	async execute(message, args, msgUser, msgGuild, client, logger) {
+	async execute(message, args, msgUser, msgGuild, client) {
 		const vote = client.characterCommands.getVote(msgUser);
 		let chest;
 

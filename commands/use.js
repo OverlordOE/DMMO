@@ -8,7 +8,7 @@ module.exports = {
 	args: false,
 	usage: '',
 
-	execute(message, args, msgUser, msgGuild, client, logger) {
+	execute(message, args, msgUser, msgGuild, client) {
 		const filter = m => m.author.id === msgUser;
 
 		let amount = 1;
@@ -58,7 +58,7 @@ module.exports = {
 										else return sentMessage.edit(embed.setDescription(`You don't have enough __${item.name}(s)__!`));
 
 									}).catch(e => {
-										logger.error(e.stack);
+										client.logger.error(e.stack);
 										throw Error('Something went wrong');
 									});
 							});
@@ -66,7 +66,7 @@ module.exports = {
 						else { return sentMessage.edit(embed.setDescription(`${collected.first().content} is not an item.`)); }
 					})
 					.catch(e => {
-						logger.error(e.stack);
+						client.logger.error(e.stack);
 						throw Error('Something went wrong');
 					});
 			}

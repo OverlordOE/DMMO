@@ -8,7 +8,7 @@ module.exports = {
 	args: false,
 	usage: '<item>',
 
-	async execute(message, args, msgUser, msgGuild, client, logger) {
+	async execute(message, args, msgUser, msgGuild, client) {
 		const filter = m => m.author.id === message.author.id;
 		let temp = '';
 		let item;
@@ -53,7 +53,7 @@ module.exports = {
 						else return sentMessage.edit(embed.setDescription(`${collected.first().content} is not a valid item.`));
 					})
 					.catch(e => {
-						logger.error(e.stack);
+						client.logger.error(e.stack);
 						throw Error('Something went wrong');
 					});
 			}

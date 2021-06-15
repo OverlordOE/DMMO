@@ -8,7 +8,7 @@ module.exports = {
 	usage: '',
 	example: '',
 
-	execute(message, args, msgUser, msgGuild, client, logger) {
+	execute(message, args, msgUser, msgGuild, client) {
 		if (!message.member.voice.channel) return message.reply('you are not in a voice channel.');
 		const data = client.music.active.get(message.guild.id);
 		if (!data) return message.reply('there are no songs to pause.');

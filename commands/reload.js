@@ -6,7 +6,7 @@ module.exports = {
 	category: 'debug',
 	args: true,
 
-	execute(message, args, msgUser, msgGuild, client, logger) {
+	execute(message, args, msgUser, msgGuild, client) {
 		const commandName = args[0].toLowerCase();
 		const command = message.client.commands.get(commandName)
 			|| message.client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
@@ -20,7 +20,7 @@ module.exports = {
 			message.client.commands.set(newCommand.name, newCommand);
 		}
 		catch (e) {
-			logger.error(e.stack);
+			client.logger.error(e.stack);
 			return message.channel.send(`There was an error while reloading a command \`${commandName}\`:\n\`${e.message}\``);
 		}
 		message.channel.send(`Command \`${command.name}\` was reloaded!`);

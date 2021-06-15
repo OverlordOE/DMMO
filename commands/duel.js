@@ -8,7 +8,7 @@ module.exports = {
 	category: 'pvp',
 	aliases: ['fight'],
 
-	async execute(message, args, msgUser, msgGuild, client, logger) {
+	async execute(message, args, msgUser, msgGuild, client) {
 		let round = 1;
 		let description = '';
 

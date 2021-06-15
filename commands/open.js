@@ -10,7 +10,7 @@ module.exports = {
 
 	args: true,
 
-	async execute(message, args, msgUser, msgGuild, client, logger) {
+	async execute(message, args, msgUser, msgGuild, client) {
 		const lootEmbed = new Discord.MessageEmbed()
 
 			.setFooter('You can open multiple chests at the same time.', client.user.displayAvatarURL());
@@ -68,8 +68,10 @@ module.exports = {
 
 
 				lootEmbed.setTitle(`${chest} Chest`)
-					.setDescription(`${message.author} has discovered **${itemAmount}** **__${lootItem.emoji}${lootItem.name}__**.`)
+					.setDescription(`${message.author} has discovered **${itemAmount}** **__${lootItem.emoji}${lootItem.name}__**.`);
+				client.util.addPicture(lootEmbed, lootItem);
 				client.util.addPicture(lootEmbed, chest, true);
+
 
 				if (lootItem.rarity == 'uncommon') lootEmbed.setColor('#1eff00');
 				else if (lootItem.rarity == 'rare') lootEmbed.setColor('#0070dd');
@@ -77,12 +79,10 @@ module.exports = {
 				else if (lootItem.rarity == 'legendary') lootEmbed.setColor('#ff8000');
 				else lootEmbed.setColor('#eeeeee');
 
-				client.util.addPicture(lootEmbed, lootItem);
-
 				message.channel.send(lootEmbed);
+
 				client.characterCommands.addItem(msgUser, lootItem, itemAmount);
 				client.characterCommands.removeItem(msgUser, item);
-
 			}
 		}
 		else message.reply('there is no loot associated with that chest.');

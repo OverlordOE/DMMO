@@ -6,7 +6,7 @@ module.exports = {
 	args: false,
 	usage: '',
 
-	async execute(message, args, msgUser, msgGuild, client, logger) {
+	async execute(message, args, msgUser, msgGuild, client) {
 		const id = message.guild.id;
 
 		if (args[0]) {

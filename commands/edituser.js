@@ -7,13 +7,13 @@ module.exports = {
 	usage: '<user> <field> <value>',
 
 
-	async execute(message, args, msgUser, msgGuild, client, logger) {
+	async execute(message, args, msgUser, msgGuild, client) {
 		const id = message.mentions.users.first().id;
 		const target = await client.characterCommands.getUser(id);
-	
+
 		try {
 			if (args[1] == 'reset') {
-			
+
 				const succes = await client.characterCommands.deleteUser(id);
 				if (succes) return message.reply('Reset succesfull.');
 				else return message.reply('Reset not succesfull!');
@@ -23,7 +23,7 @@ module.exports = {
 		}
 		catch (e) {
 			message.reply('something went wrong');
-			return logger.error(e.stack);
+			return client.logger.error(e.stack);
 		}
 		message.reply('Edit succesfull');
 	},

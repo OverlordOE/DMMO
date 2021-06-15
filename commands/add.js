@@ -6,7 +6,7 @@ module.exports = {
 	usage: '<money> <target>',
 
 
-	async execute(message, args, msgUser, msgGuild, client, logger) {
+	async execute(message, args, msgUser, msgGuild, client) {
 		const amount = args.find(arg => !/<@!?\d+>/g.test(arg));
 		const target = message.mentions.users.first() || message.author;
 		const targetUser = await client.characterCommands.getUser(target.id);

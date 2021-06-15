@@ -15,7 +15,7 @@ module.exports = {
 	usage: '<search query or link>',
 	example: 'darude sandstorm',
 
-	async execute(message, args, msgUser, msgGuild, client, logger) {
+	async execute(message, args, msgUser, msgGuild, client) {
 
 		let embed = new Discord.MessageEmbed()
 			.setThumbnail(message.author.displayAvatarURL({ dynamic: true }))
@@ -31,7 +31,7 @@ module.exports = {
 
 				const permissions = message.member.voice.channel.permissionsFor(message.guild.member(client.user));
 				if (!permissions.any('CONNECT')) {
-					logger.warn('Neia couldnt join the voice channel');
+					client.logger.warn('Neia couldnt join the voice channel');
 					return message.reply('Neia does not have permission to join the voice channel!');
 				}
 
@@ -44,7 +44,7 @@ module.exports = {
 			data.connection = await message.member.voice.channel.join();
 		}
 		catch (error) {
-			logger.warn('Neia couldnt join the voice channel');
+			client.logger.warn('Neia couldnt join the voice channel');
 			return message.reply('Something went wrong when joining the voice channel');
 		}
 
@@ -59,12 +59,12 @@ module.exports = {
 		tempMessage.delete();
 
 		if (!video) {
-			logger.warn(`Could not find youtube video with search terms "${search}"`);
+			client.logger.warn(`Could not find youtube video with search terms "${search}"`);
 			return message.channel.send(embed.setDescription(`Neia could not find any video connected to the search terms of \`${search}\``));
 		}
 
 
-		if (!data.dispatcher) Play(client, data, logger, msgUser, message);
+		if (!data.dispatcher) Play(client, data, client.logger, msgUser, message);
 		else message.channel.send(embed.setDescription(`**${video.title}**\nBy **${video.channel}**\n Has been added to the queue.\n\nRequested by ${message.author}`));
 
 		client.music.active.set(message.guild.id, data);
@@ -121,7 +121,7 @@ module.exports = {
 
 				else if (hasSearched) return null;
 				else {
-					logger.warn('Search 1 has failed');
+					client.logger.warn('Search 1 has failed');
 					hasSearched = true;
 					await SearchVideo();
 				}
@@ -156,16 +156,16 @@ module.exports = {
 			data.dispatcher.guildID = data.guildID;
 
 
-			data.dispatcher.on('finish', () => Finish(client, data.dispatcher, logger, msgUser, message));
+			data.dispatcher.on('finish', () => Finish(client, data.dispatcher, client.logger, msgUser, message));
 			data.dispatcher.on('debug', e => {
 				channel.send(embed.setDescription(`error:  ${e.info}`));
-				logger.error(e);
+				client.logger.error(e);
 			});
 
 			data.dispatcher.on('disconnect', e => {
 				data.queue = [];
 				data.dispatcher.emit('finish');
-				logger.log('info', `Bot got forcefully disconnected by: ${e.info}}`);
+				client.logger.log('info', `Bot got forcefully disconnected by: ${e.info}}`);
 			});
 
 		}
@@ -176,7 +176,7 @@ module.exports = {
 
 			if (data.queue.length > 0) {
 				client.music.active.set(data.dispatcher.guildID, data);
-				Play(client, data, logger, msgUser, message);
+				Play(client, data, client.logger, msgUser, message);
 			}
 			else {
 				client.music.active.delete(data.dispatcher.guildID);

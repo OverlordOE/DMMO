@@ -380,7 +380,8 @@ Reflect.defineProperty(characterCommands, 'hasItem', {
 			where: { user_id: user.user_id, name: item.name },
 		});
 		const check = parseInt(amount);
-		if (userItem.amount >= check && check > 0) return true;
+		
+		if (userItem && userItem.amount >= check) return true;
 		return false;
 	},
 });

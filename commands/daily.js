@@ -9,7 +9,7 @@ module.exports = {
 
 	usage: '',
 
-	async execute(message, args, msgUser, msgGuild, client, logger) {
+	async execute(message, args, msgUser, msgGuild, client) {
 		const daily = client.characterCommands.getDaily(msgUser);
 		let chest;
 

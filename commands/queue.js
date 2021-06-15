@@ -10,7 +10,7 @@ module.exports = {
 	example: '',
 
 
-	execute(message, args, msgUser, msgGuild, client, logger) {
+	execute(message, args, msgUser, msgGuild, client) {
 		const data = client.music.active.get(message.guild.id);
 		if (!data) return message.reply('no client.music queued at the moment.');
 

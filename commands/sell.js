@@ -12,7 +12,7 @@ module.exports = {
 	args: false,
 	usage: '',
 
-	execute(message, args, msgUser, msgGuild, client, logger) {
+	execute(message, args, msgUser, msgGuild, client) {
 
 		const filter = m => m.author.id === message.author.id;
 		let amount = 1;
@@ -55,7 +55,7 @@ module.exports = {
 								balance = client.characterCommands.addBalance(msgUser, refundAmount);
 								totalReceived += refundAmount;
 							});
-							logger.debug(totalReceived);
+							client.logger.debug(totalReceived);
 							sentMessage.edit(embed.setDescription(`You sold your whole inventory for ${client.util.formatNumber(totalReceived)}💰\n\nCurrent balance is ${client.util.formatNumber(balance)}💰`));
 						}
 						else return sentMessage.edit(embed.setDescription('Cancelled selling inventory'));
@@ -85,13 +85,13 @@ module.exports = {
 									else return sentMessage.edit(embed.setDescription(`You don't have enough ${item.emoji}__${item.name}(s)__!`));
 								})
 								.catch(e => {
-									logger.error(e.stack);
+									client.logger.error(e.stack);
 									message.reply('you didn\'t answer in time.');
 								});
 						});
 					})
 					.catch(e => {
-						logger.error(e.stack);
+						client.logger.error(e.stack);
 						message.reply('you didn\'t answer in time.');
 					});
 			}

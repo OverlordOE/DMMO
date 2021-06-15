@@ -9,7 +9,7 @@ module.exports = {
 	args: false,
 	usage: '<item>',
 
-	execute(message, args, msgUser, msgGuild, client, logger) {
+	execute(message, args, msgUser, msgGuild, client) {
 		let temp = '';
 		let embed;
 
