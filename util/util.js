@@ -33,6 +33,12 @@ Reflect.defineProperty(util, 'getItem', {
 
 Reflect.defineProperty(util, 'addPicture', {
 	value: function addPicture(embed, item, thumbnail = false) {
+		console.log(thumbnail);
+		if (item.link) {
+			if (thumbnail) embed.setThumbnail(item.link);
+			else embed.setImage(item.link);
+		}
+		else
 		if (item.picture) {
 			embed.attachFiles(`assets/items/${item.picture}`);
 			
