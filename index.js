@@ -4,10 +4,6 @@ const winston = require('winston');
 const moment = require('moment');
 const cron = require('cron');
 const fs = require('fs');
-// const DBL = require('dblapi.js');
-// const dbl = new DBL(process.env.DBL_TOKEN, { webhookPort: 3000, webhookAuth: process.env.WEBHOOK_TOKEN });
-const Topgg = require('@top-gg/sdk');
-const express = require('express');
 const { Users, characterCommands } = require('./util/characterCommands');
 const { guildCommands, Guilds } = require('./util/guildCommands');
 const { util } = require('./util/util');
@@ -68,17 +64,19 @@ for (const file of commandFiles) {
 
 
 // Startup Tasks
-
 if (process.argv.slice(2)[0] == 'test') client.login(process.env.TEST_TOKEN);
 else client.login(process.env.TOKEN);
 
 
 client.on('ready', async () => {
 	try {
+		// set collections
 		const storedUsers = await Users.findAll();
 		storedUsers.forEach(b => characterCommands.set(b.user_id, b));
 		const storedGuilds = await Guilds.findAll();
 		storedGuilds.forEach(b => guildCommands.set(b.guild_id, b));
+
+		// update membercount
 		let memberTotal = 0;
 		client.guilds.cache.forEach(g => { if (!isNaN(memberTotal) && g.id != 264445053596991498) memberTotal += Number(g.memberCount); });
 		client.user.setActivity(`with ${memberTotal} users.`);
@@ -86,6 +84,7 @@ client.on('ready', async () => {
 		client.characterCommands = characterCommands;
 		client.guildCommands = guildCommands;
 		client.util = util;
+		client.client.logger = client.logger;
 
 		logger.info(`Logged in as ${client.user.tag}!`);
 	}
@@ -161,7 +160,7 @@ client.on('message', async message => {
 	}
 
 	if (user.firstCommand) {
-		client.commands.get('changelog').execute(message, args, user, guild, client, logger);
+		client.commands.get('changelog').execute(message, args, user, guild, client);
 		user.firstCommand = false;
 		logger.info(`New user ${message.author.tag}`);
 		client.characterCommands.saveUser(user);
